@@ -3,7 +3,7 @@ requires = ["setuptools", "wheel", "setuptools_scm"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "pydoge-api" 
+name = "pydoge_api" 
 description = "PyDOGE API is an advanced, Python wrapper for interacting with the public-facing API of the Department of Government Efficiency (DOGE)"
 authors = [
     {name = "Hassan, Muhammad", email = "blazebyte2@gmail.com"}
