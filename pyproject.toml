@@ -33,9 +33,9 @@ Issues = "https://github.com/ihassan8/pydoge-api/issues"
 
 
 # version and requirements are dynamically pulled from setup.py. We may enable this in future if setup.py gets deprecated
-[tool.setuptools.dynamic]
-dependencies = {file = ["requirements.txt"]}
-#version = {attr = "pydoge.version.__version__"}
+# [tool.setuptools.dynamic]
+# dependencies = {file = ["requirements.txt"]}
+# version = {attr = "pydoge.version.__version__"}
 
 [tool.setuptools_scm]
 version_file = "src/pydoge-api/_version.py"
