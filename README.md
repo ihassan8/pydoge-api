@@ -66,6 +66,7 @@ pip install --upgrade pydoge-api
 
 Full developer docs with API reference, usage, and model schema:
 👉 [Read the Docs (PyDOGE)]()
+👉 [Official Swagger Docs](https://api.doge.gov/docs)
 
 ## 📚 Usage
 
