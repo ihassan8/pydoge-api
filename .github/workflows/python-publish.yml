@@ -27,7 +27,7 @@ jobs:
 
       - name: 🧱 Build sdist and wheel
         run: |
-          python -m build --sdist --wheel
+          python -m build
         # Save the output artifacts
       - name: 🗃️ Upload build artifacts
         uses: actions/upload-artifact@v4
