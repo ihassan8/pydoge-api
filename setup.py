@@ -6,7 +6,7 @@ from setuptools import setup
 package = "src/pydoge-api"
 VERSION_FILE = os.path.join(package, "_version.py")
 REQUIREMENTS_FILE = os.path.join("requirements.txt")
-MODE = "manual"  # Use can select the option 'manual' to read from version.py or 'scm' to autmatically read from .git metedata version
+MODE = "scm"  # Use can select the option 'manual' to read from version.py or 'scm' to autmatically read from .git metedata version
 
 
 def read(rel_path):
