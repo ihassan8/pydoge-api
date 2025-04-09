@@ -1,9 +1,9 @@
 site_name: PyDOGE-API
 site_description: A Python library to interact with DOGE API.
 site_author: Muhammad Hassan
-site_url: https://yourusername.github.io/pydoge
+site_url: https://yourusername.github.io/pydoge-api
 
-repo_url: https://github.com/ihassan8/pydoge
+repo_url: https://github.com/ihassan8/pydoge-api
 repo_name: GitHub
 
 theme:
@@ -49,7 +49,7 @@ theme:
   footer:
     copyright:
       text: '© 2025 Muhamamd Hassan. MIT License.'
-      link: 'https://github.com/ihassan8/pydoge'
+      link: 'https://github.com/ihassan8/pydoge-api'
       
 nav:
   - 📄 Overview: index.md

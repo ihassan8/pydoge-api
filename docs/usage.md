@@ -3,7 +3,7 @@
 ## Standard Synchronous Usage
 
 ```python
-from pydoge-api import DogeAPI
+from pydoge_api import DogeAPI
 
 api = DogeAPI(
     fetch_all=True,

@@ -67,7 +67,7 @@ pip install --upgrade pydoge-api
 ### Synchronous Fetching
 
 ```python
-from pydoge-api import DogeAPI
+from pydoge_api import DogeAPI
 
 api = DogeAPI(
     fetch_all=True,             # get all pages
