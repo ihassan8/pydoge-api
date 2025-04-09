@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools", "wheel", "setuptools_scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pydoge-api" 
+description = "PyDOGE API is an advanced, Python wrapper for interacting with the public-facing API of the Department of Government Efficiency (DOGE)"
+authors = [
+    {name = "Hassan, Muhammad", email = "blazebyte2@gmail.com"}
+]
+readme = "README.md"
+
+classifiers = [
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+	"Programming Language :: Python :: 3.11",
+    'Intended Audience :: Developers',
+    'Intended Audience :: Data Analysts',
+    'Intended Audience :: Information Technology',
+    'Operating System :: OS Independent',
+]
+requires-python = ">=3.9"
+keywords = ["doge", "government efficiency", "savings", "contracts"]
+
+dynamic = ["version", "dependencies"]
+license = 'MIT'
+license-files = ['LICENSE']
+
+[project.urls]
+Homepage = "https://github.com/ihassan8/pydoge-api"
+Documentation = "https://github.com/ihassan8/pydoge-api"
+Issues = "https://github.com/ihassan8/pydoge-api/issues"
+
+
+# version and requirements are dynamically pulled from setup.py. We may enable this in future if setup.py gets deprecated
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
+#version = {attr = "pydoge.version.__version__"}
+
+[tool.setuptools_scm]
+version_file = "src/pydoge-api/_version.py"
+
