@@ -1,0 +1,40 @@
+name: 📚 Deploy MkDocs Docs to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main  # change this if your default branch is different
+  workflow_dispatch:
+
+permissions:
+  contents: write  # required to push to gh-pages
+
+jobs:
+  deploy-docs:
+    name: 🚀 Build & Deploy Docs
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🔄 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 📦 Install dependencies
+        run: |
+          pip install mkdocs-material mkdocstrings[python]
+
+      - name: 🔧 Configure Python path (src layout)
+        run: echo "PYTHONPATH=$PYTHONPATH:$(pwd)/src" >> $GITHUB_ENV
+
+      - name: 🔨 Build site
+        run: mkdocs build --strict
+
+      - name: 🚀 Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./site
