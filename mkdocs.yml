@@ -68,10 +68,6 @@ plugins:
     - mkdocstrings:
         handlers:
           python:
-            setup_commands:
-              - import sys
-              - import os
-              - sys.path.insert(0, os.path.abspath("."))
             options:
               backlinks: tree
               docstring_style: numpy

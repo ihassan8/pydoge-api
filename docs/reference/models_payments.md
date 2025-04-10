@@ -1,5 +1,5 @@
 # Payments Models
 
-::: pydoge.models.payments
+::: pydoge_api.models.payments
     options:
       show_source: false

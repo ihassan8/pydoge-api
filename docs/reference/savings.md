@@ -1,4 +1,4 @@
-::: pydoge.endpoints.savings.SavingsEndpoint
+::: pydoge_api.endpoints.savings.SavingsEndpoint
     options:
       show_source: false
       members:

@@ -1,5 +1,5 @@
 # Savings Models
 
-::: pydoge.models.savings
+::: pydoge_api.models.savings
     options:
       show_source: false
