@@ -104,7 +104,6 @@ All contributions are welcome. If you have a suggestion that would make this bet
 
 Don't forget to give the project a star! Thanks again!
 
-🔶 [View all contributors](CONTRIBUTING.md)
 
 ## 👏 Acknowledgments
 Inspiration, code snippets, etc.
