@@ -1,5 +1,5 @@
 <div align="center">
-<img src="img/logo_main.png" alt="PyDOGE Logo" width= "176">
+<img src="./img/logo_main.png" alt="PyDOGE Logo" width= "176">
 <p>A Python library to interact with Department of Government Efficiency (DOGE) API.</p>
 </div>
 
@@ -26,8 +26,8 @@
         <li><a href="#asynchronous-pagination">Asynchronous Pagination</a></li>
       </ul>
     </li>
-    <li><a href="#family-contributors">Contributors </a></li>
-    <li><a href="#clap-acknowledgments">Acknowledgements </a></li>
+    <li><a href="#contributors">Contributors </a></li>
+    <li><a href="#acknowledgments">Acknowledgements </a></li>
   </ol>
 </details>
 
@@ -61,6 +61,13 @@ Upgrade:
 ```
 pip install --upgrade pydoge-api
 ```
+
+**Documentation**
+
+Full developer docs with API reference, usage, and model schema:
+
+- 👉 [Docs and Examples (PyDOGE)](https://ihassan8.github.io/pydoge-api/)
+- 👉 [Official Swagger Page](https://api.doge.gov/docs)
 
 ## 📚 Usage
 
