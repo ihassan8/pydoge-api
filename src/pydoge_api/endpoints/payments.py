@@ -1,7 +1,8 @@
 from math import ceil
 from ..client import DogeAPIClient
 from ..models.payments import PaymentParams, PaymentResponse
-from ..utils import run_async, _fetch_grants_pages
+from ..utils.runner import run_async, _fetch_grants_pages
+from ..utils.exporter import handle_dict
 
 class PaymentsEndpoint:
     """
@@ -68,7 +69,10 @@ class PaymentsEndpoint:
         response = PaymentResponse(**result)
 
         if not fetch_all or response.meta.pages <= 1:
-            return response if output_pydantic else response.model_dump(exclude_none=True)
+            if output_pydantic:
+                return response 
+            else: 
+                return handle_dict(response.model_dump(exclude_none=True))
 
         if run_async_flag:
             data_pages = run_async(_fetch_grants_pages("/payments", params, response.meta.pages))
@@ -87,5 +91,8 @@ class PaymentsEndpoint:
         response.meta.total_results = len(response.result.payments)
         response.meta.pages = ceil(len(response.result.payments) / per_page)
 
-        return response if output_pydantic else response.model_dump(exclude_none=True)
+        if output_pydantic:
+            return response 
+        else: 
+            return handle_dict(response.model_dump(exclude_none=True))
 

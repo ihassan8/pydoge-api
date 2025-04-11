@@ -6,8 +6,8 @@ from ..models.savings import (
     LeaseParams, LeaseResponse
 )
 #import asyncio
-from ..utils import run_async, _fetch_grants_pages
-
+from ..utils.runner import run_async, _fetch_grants_pages
+from ..utils.exporter import handle_dict
 # =============================================================================
 # async def _fetch_grants_pages(endpoint, params_obj, total_pages):
 #     async with httpx.AsyncClient(base_url="https://api.doge.gov") as client:
@@ -69,7 +69,10 @@ class SavingsEndpoint:
         response = GrantResponse(**result)
 
         if not fetch_all or response.meta.pages <= 1:
-            return response if output_pydantic else response.model_dump(exclude_none=True)
+            if output_pydantic:
+                return response 
+            else: 
+                return handle_dict(response.model_dump(exclude_none=True))
 
         if run_async_flag:
             data_pages = run_async(_fetch_grants_pages("/savings/grants", params, response.meta.pages))
@@ -87,7 +90,10 @@ class SavingsEndpoint:
 
         response.meta.total_results = len(response.result.grants)
         response.meta.pages = ceil(len(response.result.grants) / per_page)
-        return response if output_pydantic else response.model_dump(exclude_none=True)
+        if output_pydantic:
+            return response 
+        else: 
+            return handle_dict(response.model_dump(exclude_none=True))
 
     def get_contracts(self, *, sort_by=None, sort_order=None, page=1, per_page=100):
         """
@@ -129,7 +135,10 @@ class SavingsEndpoint:
         response = ContractResponse(**result)
 
         if not fetch_all or response.meta.pages <= 1:
-            return response if output_pydantic else response.model_dump(exclude_none=True)
+            if output_pydantic:
+                return response 
+            else: 
+                return handle_dict(response.model_dump(exclude_none=True))
 
         if run_async_flag:
             data_pages = run_async(_fetch_grants_pages("/savings/contracts", params, response.meta.pages))
@@ -149,7 +158,10 @@ class SavingsEndpoint:
         response.meta.total_results = len(response.result.contracts)
         response.meta.pages = ceil(len(response.result.contracts) / per_page)
         
-        return response if output_pydantic else response.model_dump(exclude_none=True)
+        if output_pydantic:
+            return response 
+        else: 
+            return handle_dict(response.model_dump(exclude_none=True))
 
     def get_leases(self, *, sort_by=None, sort_order=None, page=1, per_page=100):
         """
@@ -191,7 +203,10 @@ class SavingsEndpoint:
         response = LeaseResponse(**result)
 
         if not fetch_all or response.meta.pages <= 1:
-            return response if output_pydantic else response.model_dump(exclude_none=True)
+            if output_pydantic:
+                return response 
+            else: 
+                return handle_dict(response.model_dump(exclude_none=True))
         
         if run_async_flag:
             data_pages = run_async(_fetch_grants_pages("/savings/leases", params, response.meta.pages))
@@ -210,4 +225,7 @@ class SavingsEndpoint:
         response.meta.total_results = len(response.result.leases)
         response.meta.pages = ceil(len(response.result.leases) / per_page)
 
-        return response if output_pydantic else response.model_dump(exclude_none=True)
+        if output_pydantic:
+            return response 
+        else: 
+            return handle_dict(response.model_dump(exclude_none=True))

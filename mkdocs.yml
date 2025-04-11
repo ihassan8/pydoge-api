@@ -54,6 +54,7 @@ theme:
 nav:
   - 📄 Overview: index.md
   - 🚀 Quickstart: usage.md
+  - 💾 Data Exports: usage_exports.md
   - 🔧 API Reference:
       - Client: reference/client.md
       - Endpoints:
@@ -62,7 +63,8 @@ nav:
       - Models:
           - Savings Models: reference/models_savings.md
           - Payments Models: reference/models_payments.md
-
+      - Utilities:
+          - Export & Summary: reference/utils_export.md
 plugins:
     - search
     - mkdocstrings:

@@ -1,6 +1,6 @@
 from typing import List, Optional
 from pydantic import BaseModel, Field
-
+from ..utils.exporter import ExportMixin
 
 # === PARAM MODELS ===
 
@@ -91,17 +91,17 @@ class Meta(BaseModel):
     total_results: int = Field(..., description="The total amount of results")
     pages: int = Field(..., description="The total amount of pages at current per_page limit")
 
-class GrantResponse(BaseModel):
+class GrantResponse(BaseModel, ExportMixin):
     success: bool
     result: ResultGrants
     meta: Meta
 
-class ContractResponse(BaseModel):
+class ContractResponse(BaseModel, ExportMixin):
     success: bool
     result: ResultContracts
     meta: Meta
 
-class LeaseResponse(BaseModel):
+class LeaseResponse(BaseModel, ExportMixin):
     success: bool
     result: ResultLeases
     meta: Meta

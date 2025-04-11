@@ -1,5 +1,6 @@
 from typing import Optional, List
 from pydantic import BaseModel, Field
+from ..utils.exporter import ExportMixin
 
 class PaymentParams(BaseModel):
     sort_by: Optional[str] = Field(
@@ -36,7 +37,7 @@ class Meta(BaseModel):
     total_results: int = Field(..., description="Total number of results available.")
     pages: int = Field(..., description="Total number of pages available.")
 
-class PaymentResponse(BaseModel):
+class PaymentResponse(BaseModel, ExportMixin):
     success: bool
     result: ResultPayments
     meta: Meta
