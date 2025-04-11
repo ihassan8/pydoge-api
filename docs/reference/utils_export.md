@@ -1,7 +1,12 @@
 # 🧱 ExportableMixin Utility
 
 ::: pydoge_api.utils.exporter.ExportMixin
-
+    options:
+      show_source: false
+      members:
+        - export
+        - to_dataframe
+        - summary
 ---
 
 ## 🔁 Utility Functions
