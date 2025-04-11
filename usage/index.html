@@ -822,11 +822,26 @@
     <span class="n">run_async</span><span class="o">=</span><span class="kc">False</span>
 <span class="p">)</span>
 
+<span class="c1"># Get Grants and sorted by savings</span>
 <span class="n">grants</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">savings</span><span class="o">.</span><span class="n">get_grants</span><span class="p">(</span><span class="n">sort_by</span><span class="o">=</span><span class="s2">&quot;savings&quot;</span><span class="p">)</span>
-<span class="n">payments</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">payments</span><span class="o">.</span><span class="n">get_payments</span><span class="p">(</span><span class="nb">filter</span><span class="o">=</span><span class="s2">&quot;agency&quot;</span><span class="p">,</span> <span class="n">filter_value</span><span class="o">=</span><span class="s2">&quot;GSA&quot;</span><span class="p">)</span>
+
+<span class="c1"># Get Contracts and sorted by agency</span>
+<span class="n">contracts</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">savings</span><span class="o">.</span><span class="n">get_contracts</span><span class="p">(</span><span class="n">sort_by</span><span class="o">=</span><span class="s2">&quot;agency&quot;</span><span class="p">)</span>
+
+<span class="c1"># Get Leases</span>
+<span class="n">leases</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">savings</span><span class="o">.</span><span class="n">get_leases</span><span class="p">()</span>
+
+<span class="c1"># Get Payments and filter payments by agency</span>
+<span class="n">payments</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">payments</span><span class="o">.</span><span class="n">get_payments</span><span class="p">(</span><span class="nb">filter</span><span class="o">=</span><span class="s2">&quot;agency&quot;</span><span class="p">,</span> <span class="n">filter_value</span><span class="o">=</span><span class="s2">&quot;NASA&quot;</span><span class="p">)</span>
 
 <span class="c1"># Export to CSV</span>
 <span class="n">grants</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="s2">&quot;grants_q1&quot;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;csv&quot;</span><span class="p">)</span>
+
+<span class="c1"># Show summary in terminal</span>
+<span class="n">grants</span><span class="o">.</span><span class="n">summary</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Save the summary as markdown</span>
+<span class="n">grants</span><span class="o">.</span><span class="n">summary</span><span class="p">(</span><span class="n">save_as</span><span class="o">=</span><span class="s2">&quot;logs/grants_summary.md&quot;</span><span class="p">)</span>
 </code></pre></div>
 <h2 id="async-usage-example">Async Usage Example<a class="headerlink" href="#async-usage-example" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><span class="n">api</span> <span class="o">=</span> <span class="n">DogeAPI</span><span class="p">(</span>
