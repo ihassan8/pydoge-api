@@ -31,7 +31,7 @@
   </ol>
 </details>
 
-## 🚀 About The Project
+## 🐍 About The Project
 PyDOGE API is an advanced, Python wrapper for interacting with the public-facing API of the **Department of Government Efficiency (DOGE)** — a federal initiative aimed at increasing transparency and fiscal accountability by sharing detailed datasets on:
 
 - 💸 Cancelled grants
@@ -39,12 +39,15 @@ PyDOGE API is an advanced, Python wrapper for interacting with the public-facing
 - 🏢 Lease reductions
 - 🧾 Payment transactions
 
-## Highlights
+## 🚀 Features
 
+- Auto-pagination (sync or async, fetch all pages if needed)
+- `.export()` to CSV, Excel, or JSON with timestamped filenames  
+- `.to_dataframe()` for Pandas users 
+- `.summary()` with analytics (rows, nulls, dtypes, stats)  
+- `summary(save_as="...")` for file logging  
+- Returns Pydantic models & dict output
 - Retry-safe client with 429 handling
-- Auto-pagination (sync or async)
-- Pydantic models & dict output
-- Async page parallelization (optional)
 
 This package enables data scientists and analysts to **programmatically access and analyze** the data with ease.
 
