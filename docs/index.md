@@ -1,5 +1,5 @@
 <div align="center">
-<img src="./img/logo_main.png" alt="PyDOGE Logo" width= "176">
+<img src="./img/logo_main.PNG" alt="PyDOGE Logo" width= "176">
 <p>A Python library to interact with Department of Government Efficiency (DOGE) API.</p>
 </div>
 
