@@ -86,10 +86,16 @@ api = DogeAPI(
     run_async=False             # ← synchronous mode
 )
 
-# Grants sorted by savings
+# Get Grants and sorted by savings
 grants = api.savings.get_grants(sort_by="savings")
 
-# Filter payments by agency
+# Get Contracts and sorted by agency
+contracts = api.savings.get_contracts(sort_by="agency")
+
+# Get Leases
+leases = api.savings.get_leases()
+
+# Get Payments and filter payments by agency
 payments = api.payments.get_payments(filter="agency", filter_value="NASA")
 
 # Export to CSV

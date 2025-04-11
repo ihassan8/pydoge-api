@@ -12,11 +12,26 @@ api = DogeAPI(
     run_async=False
 )
 
+# Get Grants and sorted by savings
 grants = api.savings.get_grants(sort_by="savings")
-payments = api.payments.get_payments(filter="agency", filter_value="GSA")
+
+# Get Contracts and sorted by agency
+contracts = api.savings.get_contracts(sort_by="agency")
+
+# Get Leases
+leases = api.savings.get_leases()
+
+# Get Payments and filter payments by agency
+payments = api.payments.get_payments(filter="agency", filter_value="NASA")
 
 # Export to CSV
 grants.export("grants_q1", format="csv")
+
+# Show summary in terminal
+grants.summary(verbose=True)
+
+# Save the summary as markdown
+grants.summary(save_as="logs/grants_summary.md")
 ```
 
 ## Async Usage Example
