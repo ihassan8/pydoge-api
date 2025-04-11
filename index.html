@@ -345,39 +345,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#usage" class="md-nav__link">
-    <span class="md-ellipsis">
-      📚 Usage
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="📚 Usage">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#synchronous-fetching" class="md-nav__link">
-    <span class="md-ellipsis">
-      Synchronous Fetching
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#asynchronous-pagination" class="md-nav__link">
-    <span class="md-ellipsis">
-      Asynchronous Pagination
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#contributors" class="md-nav__link">
     <span class="md-ellipsis">
       👪 Contributors
@@ -843,39 +810,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#usage" class="md-nav__link">
-    <span class="md-ellipsis">
-      📚 Usage
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="📚 Usage">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#synchronous-fetching" class="md-nav__link">
-    <span class="md-ellipsis">
-      Synchronous Fetching
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#asynchronous-pagination" class="md-nav__link">
-    <span class="md-ellipsis">
-      Asynchronous Pagination
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#contributors" class="md-nav__link">
     <span class="md-ellipsis">
       👪 Contributors
@@ -940,12 +874,6 @@
         <li><a href="#installation">Installation</a></li>
       </ul>
     </li>
-    <li><a href="#usage">Usage</a>
-      <ul>
-        <li><a href="#synchronous-fetching">Synchronous Fetching</a></li>
-        <li><a href="#asynchronous-pagination">Asynchronous Pagination</a></li>
-      </ul>
-    </li>
     <li><a href="#contributors">Contributors </a></li>
     <li><a href="#acknowledgments">Acknowledgements </a></li>
   </ol>
@@ -985,36 +913,6 @@ Upgrade:
 <li>👉 <a href="https://ihassan8.github.io/pydoge-api/">Docs and Examples (PyDOGE)</a></li>
 <li>👉 <a href="https://api.doge.gov/docs">Official Swagger Page</a></li>
 </ul>
-<h2 id="usage">📚 Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
-<h3 id="synchronous-fetching">Synchronous Fetching<a class="headerlink" href="#synchronous-fetching" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pydoge_api</span><span class="w"> </span><span class="kn">import</span> <span class="n">DogeAPI</span>
-
-<span class="n">api</span> <span class="o">=</span> <span class="n">DogeAPI</span><span class="p">(</span>
-    <span class="n">fetch_all</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>             <span class="c1"># get all pages</span>
-    <span class="n">output_pydantic</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>      <span class="c1"># dict output</span>
-    <span class="n">handle_response</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>       <span class="c1"># parse response</span>
-    <span class="n">run_async</span><span class="o">=</span><span class="kc">False</span>             <span class="c1"># ← synchronous mode</span>
-<span class="p">)</span>
-
-<span class="c1"># Grants sorted by savings</span>
-<span class="n">grants</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">savings</span><span class="o">.</span><span class="n">get_grants</span><span class="p">(</span><span class="n">sort_by</span><span class="o">=</span><span class="s2">&quot;savings&quot;</span><span class="p">)</span>
-
-<span class="c1"># Filter payments by agency</span>
-<span class="n">payments</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">payments</span><span class="o">.</span><span class="n">get_payments</span><span class="p">(</span><span class="nb">filter</span><span class="o">=</span><span class="s2">&quot;agency&quot;</span><span class="p">,</span> <span class="n">filter_value</span><span class="o">=</span><span class="s2">&quot;NASA&quot;</span><span class="p">)</span>
-</code></pre></div>
-<h3 id="asynchronous-pagination">Asynchronous Pagination<a class="headerlink" href="#asynchronous-pagination" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><span class="n">api</span> <span class="o">=</span> <span class="n">DogeAPI</span><span class="p">(</span>
-    <span class="n">fetch_all</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">output_pydantic</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">handle_response</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">run_async</span><span class="o">=</span><span class="kc">True</span>              <span class="c1"># ← enable async parallel fetch</span>
-<span class="p">)</span>
-
-<span class="n">grants</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">savings</span><span class="o">.</span><span class="n">get_grants</span><span class="p">(</span><span class="n">sort_by</span><span class="o">=</span><span class="s2">&quot;value&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">grants</span><span class="o">.</span><span class="n">meta</span><span class="o">.</span><span class="n">total_results</span><span class="p">)</span>
-</code></pre></div>
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 <h2 id="contributors">👪 Contributors<a class="headerlink" href="#contributors" title="Permanent link">&para;</a></h2>
 <p>All contributions are welcome. If you have a suggestion that would make this better, please fork the repo and create a merge request. You can also simply open an issue with the label 'enhancement'.</p>
 <p>Don't forget to give the project a star! Thanks again!</p>
