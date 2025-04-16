@@ -1,5 +1,4 @@
-::: pydoge_api.endpoints.payments.PaymentsEndpoint
+::: pydoge_api.endpoints.payments.PaymentsAPI
     options:
-      show_source: false
       members:
         - get_payments

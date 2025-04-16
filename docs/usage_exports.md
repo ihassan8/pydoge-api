@@ -4,7 +4,7 @@ Every response returned by the PyDoge SDK — whether a Pydantic model or plain 
 
 - `.export()` — Save data to CSV, Excel, or JSON
 - `.to_dataframe()` — Get a Pandas DataFrame
-- `.summary()` — See an analytics-style report in terminal
+- `.summary()` — Generate analytic summaries: rows, nulls, types, stats
 
 These methods are available on all major responses:
 - Grants
@@ -17,25 +17,32 @@ These methods are available on all major responses:
 ## 📤 `.export()`
 
 ```python
-grants = api.savings.get_grants()
-grants.export("grants_q2", format="csv")
-grants.export("grants_q2", format="xlsx")
-grants.export("grants_q2", format="json")
+with DogeAPI(fetch_all=True) as api:
+    grants = api.savings.get_grants()
+    path = grants.export("grants_q1", format="csv")
+    print(f"Saved to: {path}")
 ```
 This saves a timestamped file like:
 
 ```
 grants_q2_20250410_172308.csv
 ```
-✅ Works for both output_pydantic=True and False.
 
+**Supported Formats**
+- csv → grants_q1_YYYYMMDD_HHMMSS.csv
+- xlsx → Excel spreadsheet
+- json → JSON array (records-style)
 
 ## 📊 `.to_dataframe()`
 
+Convert any result into a Pandas DataFrame for analysis:
+
 ```python
-df = grants.to_dataframe()
-print(df.shape)
-df.plot("date_closed", "savings")
+with DogeAPI() as api:
+    df = api.savings.get_contracts().to_dataframe()
+    print(df.head())
+    print(df.shape)
+    df.plot("date_closed", "savings")
 ```
 This is helpful for:
 
@@ -45,15 +52,17 @@ This is helpful for:
 
 ## 📈 `.summary(verbose=True)`
 
+Get a full analytical breakdown of your dataset:
+
 ```python
-grants.summary()
-grants.summary(verbose=True)
+with DogeAPI() as api:
+    grants.summary()
 
-# Show summary in terminal
-grants.summary(verbose=True)
+    # Show summary in terminal
+    grants.summary(verbose=True)
 
-# Save the summary as markdown
-grants.summary(save_as="logs/grants_summary.md")
+    # Save the summary as markdown
+    grants.summary(save_as="logs/grants_summary.md")
 ```
 **Output:**
 

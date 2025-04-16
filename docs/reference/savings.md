@@ -1,7 +1,9 @@
-::: pydoge_api.endpoints.savings.SavingsEndpoint
+# SavingsAPI
+
+::: pydoge_api.endpoints.savings.SavingsAPI
     options:
-      show_source: false
       members:
         - get_grants
         - get_contracts
         - get_leases
+

@@ -1,231 +1,175 @@
-from math import ceil
+from typing import Optional
 from ..client import DogeAPIClient
 from ..models.savings import (
     GrantParams, GrantResponse,
     ContractParams, ContractResponse,
     LeaseParams, LeaseResponse
 )
-#import asyncio
-from ..utils.runner import run_async, _fetch_grants_pages
+from ..utils.pagination import _fetch_paginated
 from ..utils.exporter import handle_dict
-# =============================================================================
-# async def _fetch_grants_pages(endpoint, params_obj, total_pages):
-#     async with httpx.AsyncClient(base_url="https://api.doge.gov") as client:
-#         tasks = []
-#         for p in range(2, total_pages + 1):
-#             params_obj.page = p
-#             clean_query = params_obj.model_dump(exclude_none=True)
-#             tasks.append(client.get(endpoint, params=clean_query))
-#         responses = await asyncio.gather(*tasks)
-#         return [r.json() for r in responses]
-# =============================================================================
 
-class SavingsEndpoint:
+
+class SavingsAPI:
     """
-    Grants, contracts and leases the Department of Government Efficiency has cancelled.
+    Access all endpoints under /savings including grants, contracts, and leases.
+
+    This class handles paginated retrieval of financial savings data via a shared
+    DogeAPIClient. Supports both Pydantic model and dict export modes.
     """
 
     def __init__(self, client: DogeAPIClient, api: 'DogeAPI'):
+        """
+        Parameters
+        ----------
+        client : DogeAPIClient
+            Shared HTTP client instance for making API calls.
+        api : DogeAPI
+            Reference to parent DogeAPI instance for runtime config flags.
+        """
         self.client = client
         self.api = api
 
-    def get_grants(self, *, sort_by=None, sort_order=None, page=1, per_page=100):
+    def get_grants(
+        self,
+        *,
+        sort_by: Optional[str] = None,
+        sort_order: Optional[str] = None,
+        page: int = 1,
+        per_page: int = 100
+    ):
         """
-        Retrieve canceled government grants.
-    
+        Retrieve cancelled or reduced government grants.
+
         Parameters
         ----------
-        
         sort_by : str, optional
-            Field to sort by: 'savings', 'value', or 'date'.
-            
+            Field to sort by. Options include 'savings', 'value', or 'date'.
         sort_order : str, optional
-            Sort order direction: 'asc' or 'desc'.
-            
-        page : int, optional
-            Page number to start from (default: 1).
-            
-        per_page : int, optional
-            Number of results per page (default: 100).
-    
+            Sort direction. One of 'asc' or 'desc'.
+        page : int, default=1
+            Starting page number for paginated results.
+        per_page : int, default=100
+            Number of records to retrieve per page.
+
         Returns
         -------
-        
-        GrantResponse | dict | httpx.Response
-            Parsed model, raw dict, or raw response depending on DogeAPI config.
+        GrantResponse or dict or httpx.Response
+            Pydantic model if `output_pydantic=True`,
+            exportable dict if `output_pydantic=False`,
+            or raw response if `handle_response=False`.
         """
-        fetch_all = self.api.fetch_all
-        output_pydantic = self.api.output_pydantic
-        handle_response = self.api.handle_response
-        run_async_flag = self.api.run_async
-
         params = GrantParams(sort_by=sort_by, sort_order=sort_order, page=page, per_page=per_page)
         query = params.model_dump(exclude_none=True)
-        result = self.client.get("/savings/grants", query, handle_response)
 
-        if not handle_response:
+        result = self.client.get("/savings/grants", params=query, decode=self.api.handle_response)
+        if not self.api.handle_response:
             return result
 
-        response = GrantResponse(**result)
+        model = GrantResponse(**result)
 
-        if not fetch_all or response.meta.pages <= 1:
-            if output_pydantic:
-                return response 
-            else: 
-                return handle_dict(response.model_dump(exclude_none=True))
+        return _fetch_paginated(
+            api=self.api,
+            client=self.client,
+            endpoint="/savings/grants",
+            params=params,
+            initial_response=model,
+            key="grants",
+            model_cls=GrantResponse,
+        )
 
-        if run_async_flag:
-            data_pages = run_async(_fetch_grants_pages("/savings/grants", params, response.meta.pages))
-            for page_data in data_pages:
-                if not page_data.get("success"):
-                    raise ValueError(f"API returned error: {page_data}")
-                next_response = GrantResponse(**page_data)
-                response.result.grants.extend(next_response.result.grants)
-        else:
-            for p in range(page + 1, response.meta.pages + 1):
-                params.page = p
-                next_data = self.client.get("/savings/grants", params.model_dump(exclude_none=True), handle_response)
-                next_response = GrantResponse(**next_data)
-                response.result.grants.extend(next_response.result.grants)
-
-        response.meta.total_results = len(response.result.grants)
-        response.meta.pages = ceil(len(response.result.grants) / per_page)
-        if output_pydantic:
-            return response 
-        else: 
-            return handle_dict(response.model_dump(exclude_none=True))
-
-    def get_contracts(self, *, sort_by=None, sort_order=None, page=1, per_page=100):
+    def get_contracts(
+        self,
+        *,
+        sort_by: Optional[str] = None,
+        sort_order: Optional[str] = None,
+        page: int = 1,
+        per_page: int = 100
+    ):
         """
-        Retrieve canceled government contracts.
+        Retrieve cancelled or optimized government contracts.
 
         Parameters
         ----------
-        
         sort_by : str, optional
-            Field to sort by. Options: 'savings', 'value', or 'agency'.
-            
+            Field to sort by. Options include 'savings', 'value', or 'agency'.
         sort_order : str, optional
-            Sort direction: 'asc' or 'desc'.
-            
-        page : int, optional
-            Page number to retrieve (default is 1).
-            
-        per_page : int, optional
-            Number of results per page (default is 100).
+            Sort direction. One of 'asc' or 'desc'.
+        page : int, default=1
+            Starting page number for paginated results.
+        per_page : int, default=100
+            Number of records to retrieve per page.
 
         Returns
         -------
-        
-        ContractResponse | dict | httpx.Response
-            Parsed model, raw dict, or raw response depending on DogeAPI config.
+        ContractResponse or dict or httpx.Response
+            Pydantic model if `output_pydantic=True`,
+            exportable dict if `output_pydantic=False`,
+            or raw response if `handle_response=False`.
         """
-        fetch_all = self.api.fetch_all
-        output_pydantic = self.api.output_pydantic
-        handle_response = self.api.handle_response
-        run_async_flag = self.api.run_async
-
         params = ContractParams(sort_by=sort_by, sort_order=sort_order, page=page, per_page=per_page)
         query = params.model_dump(exclude_none=True)
-        result = self.client.get("/savings/contracts", query, handle_response)
 
-        if not handle_response:
+        result = self.client.get("/savings/contracts", params=query, decode=self.api.handle_response)
+        if not self.api.handle_response:
             return result
 
-        response = ContractResponse(**result)
+        model = ContractResponse(**result)
 
-        if not fetch_all or response.meta.pages <= 1:
-            if output_pydantic:
-                return response 
-            else: 
-                return handle_dict(response.model_dump(exclude_none=True))
+        return _fetch_paginated(
+            api=self.api,
+            client=self.client,
+            endpoint="/savings/contracts",
+            params=params,
+            initial_response=model,
+            key="contracts",
+            model_cls=ContractResponse,
+        )
 
-        if run_async_flag:
-            data_pages = run_async(_fetch_grants_pages("/savings/contracts", params, response.meta.pages))
-            for page_data in data_pages:
-                if not page_data.get("success"):
-                    raise ValueError(f"API returned error: {page_data}")
-                next_response = ContractResponse(**page_data)
-                response.result.contracts.extend(next_response.result.contracts)
-        else:
-            for p in range(page + 1, response.meta.pages + 1):
-                params.page = p
-                next_data = self.client.get("/savings/contracts", params.model_dump(exclude_none=True), handle_response)
-                next_response = ContractResponse(**next_data)
-                response.result.contracts.extend(next_response.result.contracts)
-                
-
-        response.meta.total_results = len(response.result.contracts)
-        response.meta.pages = ceil(len(response.result.contracts) / per_page)
-        
-        if output_pydantic:
-            return response 
-        else: 
-            return handle_dict(response.model_dump(exclude_none=True))
-
-    def get_leases(self, *, sort_by=None, sort_order=None, page=1, per_page=100):
+    def get_leases(
+        self,
+        *,
+        sort_by: Optional[str] = None,
+        sort_order: Optional[str] = None,
+        page: int = 1,
+        per_page: int = 100
+    ):
         """
-        Retrieve canceled or terminated government leases.
+        Retrieve terminated or downsized government leases.
 
         Parameters
         ----------
-        
         sort_by : str, optional
-            Field to sort by. Options: 'sq_ft', 'value', or 'agency'.
-            
+            Field to sort by. Options include 'sq_ft', 'value', or 'agency'.
         sort_order : str, optional
-            Sort direction: 'asc' or 'desc'.
-            
-        page : int, optional
-            Page number to retrieve (default is 1).
-            
-        per_page : int, optional
-            Number of results per page (default is 100).
+            Sort direction. One of 'asc' or 'desc'.
+        page : int, default=1
+            Starting page number for paginated results.
+        per_page : int, default=100
+            Number of records to retrieve per page.
 
         Returns
         -------
-        
-        LeaseResponse | dict | httpx.Response
-            Parsed model, raw dict, or raw response depending on DogeAPI config.
+        LeaseResponse or dict or httpx.Response
+            Pydantic model if `output_pydantic=True`,
+            exportable dict if `output_pydantic=False`,
+            or raw response if `handle_response=False`.
         """
-        fetch_all = self.api.fetch_all
-        output_pydantic = self.api.output_pydantic
-        handle_response = self.api.handle_response
-        run_async_flag = self.api.run_async
-
         params = LeaseParams(sort_by=sort_by, sort_order=sort_order, page=page, per_page=per_page)
         query = params.model_dump(exclude_none=True)
-        result = self.client.get("/savings/leases", query, handle_response)
 
-        if not handle_response:
+        result = self.client.get("/savings/leases", params=query, decode=self.api.handle_response)
+        if not self.api.handle_response:
             return result
 
-        response = LeaseResponse(**result)
+        model = LeaseResponse(**result)
 
-        if not fetch_all or response.meta.pages <= 1:
-            if output_pydantic:
-                return response 
-            else: 
-                return handle_dict(response.model_dump(exclude_none=True))
-        
-        if run_async_flag:
-            data_pages = run_async(_fetch_grants_pages("/savings/leases", params, response.meta.pages))
-            for page_data in data_pages:
-                if not page_data.get("success"):
-                    raise ValueError(f"API returned error: {page_data}")
-                next_response = LeaseResponse(**page_data)
-                response.result.leases.extend(next_response.result.leases)
-        else:
-            for p in range(page + 1, response.meta.pages + 1):
-                params.page = p
-                next_data = self.client.get("/savings/leases", params.model_dump(exclude_none=True), handle_response)
-                next_response = LeaseResponse(**next_data)
-                response.result.leases.extend(next_response.result.leases)
+        return _fetch_paginated(
+            api=self.api,
+            client=self.client,
+            endpoint="/savings/leases",
+            params=params,
+            initial_response=model,
+            key="leases",
+            model_cls=LeaseResponse,
+        )
 
-        response.meta.total_results = len(response.result.leases)
-        response.meta.pages = ceil(len(response.result.leases) / per_page)
-
-        if output_pydantic:
-            return response 
-        else: 
-            return handle_dict(response.model_dump(exclude_none=True))

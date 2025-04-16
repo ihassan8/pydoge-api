@@ -54,22 +54,29 @@ theme:
 nav:
   - 📄 Overview: index.md
   - 🚀 Quickstart: usage.md
-  - 💾 Data Exports: usage_exports.md
+  - 📊 Exports & Summary: usage_exports.md
+  - 🔍 Analytics Engine:
+      - Overview: reference/analytics.md
+      - Top Agencies: reference/analytics_agencies.md
+  - 🧠 Endpoints:
+      - Savings: reference/savings.md
+      - Payments: reference/payments.md
   - 🔧 API Reference:
+      - DogeAPI: reference/api.md
       - Client: reference/client.md
-      - Endpoints:
-          - Savings: reference/savings.md
-          - Payments: reference/payments.md
       - Models:
-          - Savings Models: reference/models_savings.md
-          - Payments Models: reference/models_payments.md
-      - Utilities:
-          - Export & Summary: reference/utils_export.md
+          - Savings: reference/models_savings.md
+          - Payments: reference/models_payments.md
+      - Utils: reference/utils_export.md
+
 plugins:
     - search
     - mkdocstrings:
         handlers:
           python:
+            setup_commands:
+              - import sys
+              - sys.path.insert(0, "src")
             options:
               backlinks: tree
               docstring_style: numpy
