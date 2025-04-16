@@ -74,9 +74,6 @@ plugins:
     - mkdocstrings:
         handlers:
           python:
-            setup_commands:
-              - import sys
-              - sys.path.insert(0, "src")
             options:
               backlinks: tree
               docstring_style: numpy
