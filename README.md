@@ -134,7 +134,7 @@ with DogeAPI(fetch_all=True, run_async=False) as api:
 ```python
 with DogeAPI(fetch_all=True, run_async=False) as api:
     payments = api.payments.get_payments(filter="agency", filter_value="NASA")
-    df =payments.to_dataframe()
+    df = payments.to_dataframe()
     print(df.head())
     
     # Export to CSV
