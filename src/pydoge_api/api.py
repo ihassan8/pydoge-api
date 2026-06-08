@@ -26,7 +26,7 @@ class DogeAPI:
         handle_response: bool = True,
         run_async: bool = False,
         client: Optional[DogeAPIClient] = None,
-        **client_kwargs
+        **client_kwargs,
     ):
         """
         Initialize DogeAPI with a shared DogeAPIClient and global endpoint config flags.
@@ -73,4 +73,3 @@ class DogeAPI:
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.close()
-

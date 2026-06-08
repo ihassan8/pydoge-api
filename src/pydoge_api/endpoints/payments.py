@@ -16,7 +16,7 @@ class PaymentsAPI:
     Access payments-related endpoints (/payments/*).
     """
 
-    def __init__(self, client: DogeAPIClient, api: 'DogeAPI'):
+    def __init__(self, client: DogeAPIClient, api: "DogeAPI"):
         """
         Parameters
         ----------
@@ -110,4 +110,3 @@ class PaymentsAPI:
         if self.api.output_pydantic:
             return PaymentStatisticsResponse(**cast(dict, result))
         return cast(dict, handle_dict(cast(dict, result)))
-

@@ -82,6 +82,7 @@ def envelope(key: str, items: list, *, pages: int = 1, total: int | None = None)
 
 # ── Payload fixtures ────────────────────────────────────────────────────────
 
+
 @pytest.fixture
 def grants_payload() -> dict:
     return envelope("grants", [GRANT])

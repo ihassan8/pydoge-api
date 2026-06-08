@@ -50,7 +50,7 @@ pip install pydoge-api              # core
 pip install "pydoge-api[viz]"      # + charts (matplotlib, plotly)
 ```
 
-> Requires Python 3.8+.
+> Requires Python 3.9+.
 
 ## ⚡ Quickstart
 

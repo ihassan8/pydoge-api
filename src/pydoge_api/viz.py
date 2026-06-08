@@ -43,10 +43,57 @@ __all__ = [
 
 # Two-letter USPS codes accepted by plotly's ``locationmode="USA-states"``.
 _US_STATES = {
-    "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL",
-    "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT",
-    "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI",
-    "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY", "DC",
+    "AL",
+    "AK",
+    "AZ",
+    "AR",
+    "CA",
+    "CO",
+    "CT",
+    "DE",
+    "FL",
+    "GA",
+    "HI",
+    "ID",
+    "IL",
+    "IN",
+    "IA",
+    "KS",
+    "KY",
+    "LA",
+    "ME",
+    "MD",
+    "MA",
+    "MI",
+    "MN",
+    "MS",
+    "MO",
+    "MT",
+    "NE",
+    "NV",
+    "NH",
+    "NJ",
+    "NM",
+    "NY",
+    "NC",
+    "ND",
+    "OH",
+    "OK",
+    "OR",
+    "PA",
+    "RI",
+    "SC",
+    "SD",
+    "TN",
+    "TX",
+    "UT",
+    "VT",
+    "VA",
+    "WA",
+    "WV",
+    "WI",
+    "WY",
+    "DC",
 }
 
 
@@ -55,8 +102,7 @@ def _require_matplotlib():
         import matplotlib.pyplot as plt  # noqa: F401
     except ImportError as exc:  # pragma: no cover - exercised via message only
         raise ImportError(
-            "Plotting requires the 'viz' extra. Install it with: "
-            'pip install "pydoge-api[viz]"'
+            "Plotting requires the 'viz' extra. Install it with: pip install \"pydoge-api[viz]\""
         ) from exc
     return plt
 
@@ -66,8 +112,7 @@ def _require_plotly():
         import plotly.express as px  # noqa: F401
     except ImportError as exc:  # pragma: no cover - exercised via message only
         raise ImportError(
-            "The choropleth requires the 'viz' extra. Install it with: "
-            'pip install "pydoge-api[viz]"'
+            "The choropleth requires the 'viz' extra. Install it with: pip install \"pydoge-api[viz]\""
         ) from exc
     return px
 
@@ -215,9 +260,7 @@ def state_from_location(location: Any) -> Optional[str]:
     return None
 
 
-def add_state_column(
-    df: pd.DataFrame, *, location_col: str = "location", state_col: str = "state"
-) -> pd.DataFrame:
+def add_state_column(df: pd.DataFrame, *, location_col: str = "location", state_col: str = "state") -> pd.DataFrame:
     """Return a copy of ``df`` with a ``state_col`` derived from ``location_col``."""
     _require_columns(df, [location_col])
     out = df.copy()

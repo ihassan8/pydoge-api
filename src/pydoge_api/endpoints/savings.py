@@ -19,7 +19,7 @@ class SavingsAPI:
     DogeAPIClient. Supports both Pydantic model and dict export modes.
     """
 
-    def __init__(self, client: DogeAPIClient, api: 'DogeAPI'):
+    def __init__(self, client: DogeAPIClient, api: "DogeAPI"):
         """
         Parameters
         ----------
@@ -32,12 +32,7 @@ class SavingsAPI:
         self.api = api
 
     def get_grants(
-        self,
-        *,
-        sort_by: Optional[str] = None,
-        sort_order: Optional[str] = None,
-        page: int = 1,
-        per_page: int = 100
+        self, *, sort_by: Optional[str] = None, sort_order: Optional[str] = None, page: int = 1, per_page: int = 100
     ) -> Union[GrantResponse, dict, httpx.Response]:
         """
         Retrieve cancelled or reduced government grants.
@@ -80,12 +75,7 @@ class SavingsAPI:
         )
 
     def get_contracts(
-        self,
-        *,
-        sort_by: Optional[str] = None,
-        sort_order: Optional[str] = None,
-        page: int = 1,
-        per_page: int = 100
+        self, *, sort_by: Optional[str] = None, sort_order: Optional[str] = None, page: int = 1, per_page: int = 100
     ) -> Union[ContractResponse, dict, httpx.Response]:
         """
         Retrieve cancelled or optimized government contracts.
@@ -128,12 +118,7 @@ class SavingsAPI:
         )
 
     def get_leases(
-        self,
-        *,
-        sort_by: Optional[str] = None,
-        sort_order: Optional[str] = None,
-        page: int = 1,
-        per_page: int = 100
+        self, *, sort_by: Optional[str] = None, sort_order: Optional[str] = None, page: int = 1, per_page: int = 100
     ) -> Union[LeaseResponse, dict, httpx.Response]:
         """
         Retrieve terminated or downsized government leases.
@@ -218,11 +203,9 @@ class SavingsAPI:
             resp = fetch()
             if not hasattr(resp, "to_dataframe"):
                 raise TypeError(
-                    "SavingsAPI.all() requires parsed responses; "
-                    "construct DogeAPI with handle_response=True."
+                    "SavingsAPI.all() requires parsed responses; construct DogeAPI with handle_response=True."
                 )
             df = cast(Any, resp).to_dataframe(parse_dates=parse_dates)
             df.insert(0, "kind", kind)
             frames.append(df)
         return pd.concat(frames, ignore_index=True)
-

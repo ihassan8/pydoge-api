@@ -50,10 +50,7 @@ def _fetch_paginated(
     resp: Any = initial_response
 
     if not api.fetch_all or getattr(resp.meta, "pages", 1) <= 1:
-        return (
-            initial_response if api.output_pydantic
-            else handle_dict(resp.model_dump(exclude_none=True))
-        )
+        return initial_response if api.output_pydantic else handle_dict(resp.model_dump(exclude_none=True))
 
     all_items = getattr(resp.result, key)
     per_page = params.per_page
@@ -61,6 +58,7 @@ def _fetch_paginated(
     total_pages = resp.meta.pages
 
     if api.run_async:
+
         async def fetch_all():
             return await _fetch_grants_pages(client, endpoint, params, total_pages)
 
@@ -82,7 +80,4 @@ def _fetch_paginated(
     resp.meta.total_results = len(all_items)
     resp.meta.pages = ceil(len(all_items) / per_page)
 
-    return (
-        initial_response if api.output_pydantic
-        else handle_dict(resp.model_dump(exclude_none=True))
-    )
+    return initial_response if api.output_pydantic else handle_dict(resp.model_dump(exclude_none=True))
