@@ -8,20 +8,14 @@
 <details open="true">
   <summary><strong> 🧾 Table of Contents</strong></summary>
   <ol>
-    <li>
-      <a href="#about-the-project">About The Project</a>
-    </li>
-    <li>
-      <a href="#highlights">Highlights</a>
-    </li>
+    <li><a href="#about-the-project">About The Project</a></li>
+    <li><a href="#features">Features</a></li>
     <li>
       <a href="#getting-started">Getting Started</a>
       <ul>
         <li><a href="#installation">Installation</a></li>
       </ul>
     </li>
-    <li><a href="#contributors">Contributors </a></li>
-    <li><a href="#acknowledgments">Acknowledgements </a></li>
   </ol>
 </details>
 
@@ -42,6 +36,10 @@ PyDOGE API is an advanced, Python wrapper for interacting with the public-facing
 - `summary(save_as="...")` for file logging  
 - Returns Pydantic models & dict output
 - Retry-safe client with 429 handling
+- `savings.all()` — one tidy DataFrame across grants, contracts & leases
+- Modern `pydoge` CLI (Typer + Rich) for fetch / export / summary
+- Built-in charts (bar, time-series, distribution, US-state choropleth) via the `[viz]` extra
+- Secure logging powered by [PyLogShield](https://github.com/ihassan8/pylogshield) (credential scrubbing + on-demand masking)
 
 This package enables data scientists and analysts to **programmatically access and analyze** the data with ease.
 
@@ -74,5 +72,3 @@ Don't forget to give the project a star! Thanks again!
 
 ## 👏 Acknowledgments
 Inspiration, code snippets, etc.
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>

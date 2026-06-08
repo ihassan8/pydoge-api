@@ -20,10 +20,10 @@ with DogeAPI(fetch_all=True, run_async=False) as api:
     grants.summary(save_as="logs/grants_summary.md")
 ```
 
-## Get Contracts and sorted by agency
+## Get Contracts and sorted by savings
 ```python
 with DogeAPI(fetch_all=True, run_async=False) as api:
-    contracts = api.savings.get_contracts(sort_by="agency")
+    contracts = api.savings.get_contracts(sort_by="savings")
     df = contracts.to_dataframe()
     print(df.head())
 
@@ -57,7 +57,7 @@ with DogeAPI(fetch_all=True, run_async=False) as api:
 ## Get Payments and filter payments by agency
 ```python
 with DogeAPI(fetch_all=True, run_async=False) as api:
-    payments = api.payments.get_payments(filter="agency", filter_value="NASA")
+    payments = api.payments.get_payments(filter="agency_name", filter_value="NASA")
     df =payments.to_dataframe()
     print(df.head())
     
@@ -83,13 +83,13 @@ try:
     grants = api.savings.get_grants(sort_by="savings")
     
     # Get Contracts and sorted by agency
-    contracts = api.savings.get_contracts(sort_by="agency")
+    contracts = api.savings.get_contracts(sort_by="savings")
     
     # Get Leases
     leases = api.savings.get_leases()
     
     # Get Payments and filter payments by agency
-    payments = api.payments.get_payments(filter="agency", filter_value="NASA")
+    payments = api.payments.get_payments(filter="agency_name", filter_value="NASA")
     
     # Export to CSV
     grants.export("grants_q1", format="csv")

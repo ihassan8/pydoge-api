@@ -1,0 +1,78 @@
+# ==============================================================================
+# 🚢 Release Workflow — Project Caller
+# ==============================================================================
+# TRIGGERS & JOB MATRIX:
+#
+#   Event            │ docs │ publish
+#   ─────────────────┼──────┼────────
+#   Push to main     │  ✅  │   ⛔
+#   Push tag X.X.X   │  ⛔  │   ✅
+#   Manual dispatch  │  ✅  │   ⛔
+#
+# RELEASE FLOW:
+#   1. Merge PRs to main as normal — docs deploy automatically after CI passes
+#   2. When ready to release, push a bare SemVer tag:
+#        git tag 1.2.1
+#        git push origin 1.2.1
+#   3. The publish job runs: validate → test → build → publish
+#
+# SECRETS REQUIRED (Settings → Secrets and variables → Actions):
+#   PYPI_API_TOKEN — from pypi.org (trusted publishing is disabled below)
+#
+# PRE-REQUISITES (once per project):
+#   1. Settings → Pages → Source → GitHub Actions
+#   2. Settings → Environments → New environment: "pypi"
+#   3. docs/requirements.txt lists the docs build dependencies
+# ==============================================================================
+
+name: 🚢 Release
+
+on:
+  push:
+    tags:
+      - "*.*.*"       # Publish only — bare SemVer e.g. 1.2.1
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
+    branches: [main]  # Docs deploy — triggered after CI passes on main
+  workflow_dispatch:  # Manual trigger — docs only
+
+jobs:
+
+  # ============================================================
+  # 📚 Deploy Zensical docs to GitHub Pages
+  # Runs on: push to main (after CI success), manual dispatch
+  # ============================================================
+  docs:
+    name: 📚 Deploy Docs
+    if: |
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success') ||
+      github.event_name == 'workflow_dispatch'
+    uses: ihassan8/shared-workflows/.github/workflows/publish-zensical.yml@main
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    with:
+      python-version: "3.11"
+      docs-requirements: "docs/requirements.txt"
+      src-layout: true
+    secrets: inherit
+
+  # ============================================================
+  # 📦 Build and Publish Package
+  # Runs on: tag push only (tag guard enforced inside the reusable workflow)
+  # ============================================================
+  publish:
+    name: 📦 Publish Package
+    uses: ihassan8/shared-workflows/.github/workflows/python-publish.yml@main
+    permissions:
+      contents: read
+      id-token: write
+    with:
+      python-version: "3.11"
+      run-tests: true
+      test-command: "pytest tests/ -v --tb=short"
+      publish-target: "pypi"          # 'both' | 'pypi' | 'testpypi'
+      use-trusted-publishing: false    # set true to use OIDC instead of PYPI_API_TOKEN
+    secrets: inherit

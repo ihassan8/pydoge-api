@@ -1,28 +1,29 @@
 # 🏢 Agency-Level Analytics
 
-This page covers the `DogeAnalytics` methods used to rank agencies based on financial metrics like savings, contracts, and leases.
+This page covers the `DogeAnalytics` methods used to rank agencies by financial metrics.
+All of them return a ranked `pandas.DataFrame`.
 
-All methods return a ranked `pandas.DataFrame` with the agency name and the aggregated total value.
+!!! note
+    `top_agencies_by_savings`, `top_agencies_by_contracts`, and `top_agencies_by_leases`
+    all aggregate the **`savings`** field of their respective endpoints — the dollar value
+    saved by the cancellation/termination.
 
 ---
 
-## 💰 `top_agencies_by_savings(top_n=5)`
+## 💰 `top_agencies_by_savings(top_n=10)`
 
 ### Description
-Returns the top N agencies by **total reported savings** from the `/savings/grants` endpoint.
+Returns the top N agencies by **total reported savings** from `/savings/grants`.
 
 ### Parameters
 
-| Name   | Type | Description                      |
-|--------|------|----------------------------------|
-| `top_n`| int  | Number of agencies to return     |
+| Name   | Type | Description                  |
+|--------|------|------------------------------|
+| `top_n`| int  | Number of agencies to return |
 
 ### Returns
 
-`pandas.DataFrame` with columns:
-
-- `agency`
-- `savings`
+`pandas.DataFrame` with columns `Agency`, `Total Savings`.
 
 ### Example
 
@@ -32,15 +33,13 @@ with DogeAnalytics(fetch_all=True) as da:
     print(top_savings)
 ```
 
+---
 
-📜 `top_agencies_by_contracts(top_n=5)`
----------------------------------------
+## 📜 `top_agencies_by_contracts(top_n=10)`
 
 ### Description
-
-Returns the top N agencies based on **total contract value** from the `/savings/contracts` endpoint.
-
-Assumes the field is named `contract_value` in the API response.
+Returns the top N agencies by **total contract savings** from `/savings/contracts`
+(rows with a null `savings` value are dropped before aggregating).
 
 ### Parameters
 
@@ -50,11 +49,7 @@ Assumes the field is named `contract_value` in the API response.
 
 ### Returns
 
-`pandas.DataFrame` with columns:
-
-*   `agency`
-*   `savings`
-    
+`pandas.DataFrame` with columns `agency`, `savings`.
 
 ### Example
 
@@ -64,14 +59,13 @@ with DogeAnalytics(fetch_all=True) as da:
     print(top_contracts)
 ```
 
-🏢 `top_agencies_by_leases(top_n=5)`
-------------------------------------
+---
+
+## 🏢 `top_agencies_by_leases(top_n=10)`
 
 ### Description
-
-Returns the top N agencies by **total lease cost** from the `/savings/leases` endpoint.
-
-Assumes the field is named `lease_cost` in the API response.
+Returns the top N agencies by **total lease savings** from `/savings/leases`
+(rows with a null `savings` value are dropped before aggregating).
 
 ### Parameters
 
@@ -81,11 +75,7 @@ Assumes the field is named `lease_cost` in the API response.
 
 ### Returns
 
-`pandas.DataFrame` with columns:
-
-*   `agency`
-*   `savings`
-    
+`pandas.DataFrame` with columns `agency`, `savings`.
 
 ### Example
 
@@ -95,22 +85,23 @@ with DogeAnalytics(fetch_all=True) as da:
     print(top_leases)
 ```
 
+---
 
-🔁 Customizing the Aggregation
-------------------------------
+## 🔁 Customizing the Aggregation
 
-You can easily write your own metric-based groupings:
+`DogeAnalytics` exposes the underlying `SavingsAPI` as `.savings`, so you can build your
+own groupings from a full DataFrame:
 
 ```python
-df = da.contracts_dataframe()
-top = df.groupby("agency")["contract_type_A"].sum().sort_values(ascending=False).head(5)
-print(top)
+with DogeAnalytics(fetch_all=True) as da:
+    df = da.savings.get_contracts().to_dataframe()
+    top_vendors = df.groupby("vendor")["savings"].sum().sort_values(ascending=False).head(5)
+    print(top_vendors)
 ```
 
-* * *
+---
 
-📤 Exporting the Rankings
--------------------------
+## 📤 Exporting the Rankings
 
 ```python
 da.export_dataset(top_savings, "top_savings_by_agency", format="xlsx")

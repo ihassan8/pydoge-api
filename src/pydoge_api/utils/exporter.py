@@ -1,8 +1,25 @@
-import pandas as pd
 from datetime import datetime
 from io import StringIO
 from pathlib import Path
+from typing import Optional
+
+import pandas as pd
 from pydantic import BaseModel
+
+#: Columns the DOGE API returns as date strings. They are coerced to ``datetime64``
+#: by :meth:`ExportMixin.to_dataframe` so time-series analysis and plotting work out
+#: of the box. (``date`` — grants/leases; ``payment_date`` — payments;
+#: ``deleted_date`` — contracts.)
+DATE_COLUMNS = ("date", "payment_date", "deleted_date")
+
+
+def _coerce_dates(df: pd.DataFrame) -> pd.DataFrame:
+    """Convert known date columns in ``df`` to ``datetime64`` (unparseable -> NaT)."""
+    for col in DATE_COLUMNS:
+        if col in df.columns:
+            df[col] = pd.to_datetime(df[col], errors="coerce")
+    return df
+
 
 class ExportMixin:
     def _get_timestamped_path(self, filename: str, ext: str) -> Path:
@@ -39,50 +56,68 @@ class ExportMixin:
 
         return path
 
-    def to_dataframe(self) -> pd.DataFrame:
+    def to_dataframe(self, parse_dates: bool = True) -> pd.DataFrame:
         """
         Convert the response data collection to a Pandas DataFrame.
+
+        Parameters
+        ----------
+        parse_dates : bool, default=True
+            If True, coerce known date columns (``date``, ``payment_date``,
+            ``deleted_date``) from date strings to ``datetime64``. Unparseable
+            values become ``NaT``. Set False to keep the raw string columns.
 
         Returns
         -------
         pd.DataFrame
         """
-        return pd.DataFrame(self._get_collection())
+        df = pd.DataFrame(self._get_collection())
+        if parse_dates:
+            df = _coerce_dates(df)
+        return df
 
-    def summary(self, verbose: bool = False, save_as: str = None):
+    def summary(self, verbose: bool = False, save_as: Optional[str] = None, to_stdout: bool = True) -> str:
         """
-        Print and optionally save an analytics summary of the dataset.
-    
+        Build, optionally print, and optionally save an analytics summary of the dataset.
+
         Parameters
         ----------
         verbose : bool
-            If True, print a head preview of the data.
+            If True, include a head preview of the data.
         save_as : str, optional
             Path to save the summary text (e.g. "summary.md" or "report.txt").
+        to_stdout : bool, default=True
+            If True, print the summary to stdout. Set False to capture it silently
+            via the return value.
+
+        Returns
+        -------
+        str
+            The rendered summary text.
         """
-    
+
         df = self.to_dataframe()
         out = StringIO()
-    
+
         def p(text=""):
             print(text, file=out)
-    
+
         p("📊 PyDoge Data Summary")
         p("=" * 40)
         p(f"🧾 Rows       : {df.shape[0]}")
         p(f"🧬 Columns    : {df.shape[1]}")
         p(f"🕳️  Total NaNs : {df.isnull().sum().sum()}\n")
-    
+
         p("📑 Column Data Types:")
         p(df.dtypes.to_string())
         p("")
-    
+
         nulls = df.isnull().sum()
         nulls = nulls[nulls > 0]
         p("📉 Nulls by Column:")
         p(nulls.to_string() if not nulls.empty else "✅ No null values detected")
         p("")
-    
+
         numeric_cols = df.select_dtypes(include="number").columns
         if not numeric_cols.empty:
             p("📈 Numeric Column Stats:")
@@ -90,27 +125,34 @@ class ExportMixin:
             stats = stats[["count", "mean", "std", "min", "max"]]
             p(stats.round(2).to_string())
             p("")
-    
-        cat_cols = df.select_dtypes(include="object").columns
+
+        # Categorical-ish columns = everything that isn't numeric or datetime. Using
+        # `exclude` (rather than `include="object"`) is stable across pandas 2/3, where
+        # string columns are migrating off the `object` dtype.
+        cat_cols = df.select_dtypes(exclude=["number", "datetime", "datetimetz"]).columns
         if not cat_cols.empty:
             p("🔠 Top Categories:")
             for col in cat_cols:
                 top = df[col].value_counts().head(3)
                 p(f"\n[{col}]")
                 p(top.to_string())
-    
+
         if verbose:
             p("\n📋 Sample Preview:")
             p(df.head().to_string())
-    
-        # Print to terminal
-        print(out.getvalue())
-    
+
+        text = out.getvalue()
+
+        if to_stdout:
+            print(text)
+
         # Optionally save to file
         if save_as:
             with open(save_as, "w", encoding="utf-8") as f:
-                f.write(out.getvalue())
-                
+                f.write(text)
+
+        return text
+
 class DictExportable(dict, ExportMixin):
     """A dict subclass with .export() support"""
     pass

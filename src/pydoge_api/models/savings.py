@@ -1,6 +1,9 @@
 from typing import List, Optional
+
 from pydantic import BaseModel, Field
+
 from ..utils.exporter import ExportMixin
+from .common import Meta
 
 # === PARAM MODELS ===
 
@@ -20,7 +23,7 @@ class GrantParams(BaseModel):
 
 class ContractParams(BaseModel):
     sort_by: Optional[str] = Field(
-        default=None, description="Field to sort by: 'savings', 'value', or 'agency'."
+        default=None, description="Field to sort by: 'savings', 'value', or 'date'."
     )
     sort_order: Optional[str] = Field(
         default=None, description="Sort direction: 'asc' or 'desc'."
@@ -34,7 +37,7 @@ class ContractParams(BaseModel):
 
 class LeaseParams(BaseModel):
     sort_by: Optional[str] = Field(
-        default=None, description="Field to sort by: 'sq_ft', 'value', or 'agency'."
+        default=None, description="Field to sort by: 'savings', 'value', or 'date'."
     )
     sort_order: Optional[str] = Field(
         default=None, description="Sort direction: 'asc' or 'desc'."
@@ -81,15 +84,13 @@ class Lease(BaseModel):
     sq_ft: float = Field(..., description="The square footage of the property")
     description: Optional[str] = Field(None, description="The description of the status of the lease")
     value: float = Field(..., description="The dollar value of the lease for the next year")
-    savings: float = Field(..., description="The dollar value remaining on the lease at the time cancellation is effective")
+    savings: float = Field(
+        ..., description="The dollar value remaining on the lease at the time cancellation is effective"
+    )
     agency: str = Field(..., description="The agency using the property")
 
 class ResultLeases(BaseModel):
     leases: List[Lease] = Field(..., description="List of terminated or cancelled leases.")
-
-class Meta(BaseModel):
-    total_results: int = Field(..., description="The total amount of results")
-    pages: int = Field(..., description="The total amount of pages at current per_page limit")
 
 class GrantResponse(BaseModel, ExportMixin):
     success: bool

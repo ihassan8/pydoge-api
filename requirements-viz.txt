@@ -1,0 +1,2 @@
+matplotlib>=3.5
+plotly>=5.0

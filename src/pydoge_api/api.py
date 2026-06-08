@@ -1,6 +1,9 @@
+from typing import Optional
+
 from .client import DogeAPIClient
-from .endpoints.savings import SavingsAPI
 from .endpoints.payments import PaymentsAPI
+from .endpoints.savings import SavingsAPI
+
 
 class DogeAPI:
     """
@@ -22,6 +25,7 @@ class DogeAPI:
         output_pydantic: bool = True,
         handle_response: bool = True,
         run_async: bool = False,
+        client: Optional[DogeAPIClient] = None,
         **client_kwargs
     ):
         """
@@ -37,21 +41,32 @@ class DogeAPI:
             If True, decode responses. If False, return raw httpx.Response.
         run_async : bool
             If True, use asyncio-based pagination (if supported).
+        client : DogeAPIClient, optional
+            Reuse an existing client. When provided, `close()` will **not** close it
+            (the caller owns its lifecycle) and `**client_kwargs` are ignored.
         **client_kwargs : dict
-            Passed to DogeAPIClient (e.g. base_url, timeout, headers).
+            Passed to DogeAPIClient (e.g. base_url, timeout, headers) when `client`
+            is not supplied.
         """
         self.fetch_all = fetch_all
         self.output_pydantic = output_pydantic
         self.handle_response = handle_response
         self.run_async = run_async
 
-        self.client = DogeAPIClient(**client_kwargs)
+        if client is not None:
+            self.client = client
+            self._owns_client = False
+        else:
+            self.client = DogeAPIClient(**client_kwargs)
+            self._owns_client = True
+
         self.savings = SavingsAPI(client=self.client, api=self)
         self.payments = PaymentsAPI(client=self.client, api=self)
 
     def close(self):
-        """Close the internal client session."""
-        self.client.close()
+        """Close the internal client session (unless an external client was injected)."""
+        if self._owns_client:
+            self.client.close()
 
     def __enter__(self):
         return self
