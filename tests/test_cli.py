@@ -53,9 +53,7 @@ def test_contracts_summary(patched_api):
 
 
 def test_payments_filter(patched_api):
-    result = runner.invoke(
-        cli.app, ["payments", "--filter", "agency_name", "--filter-value", "NASA"], env=WIDE
-    )
+    result = runner.invoke(cli.app, ["payments", "--filter", "agency_name", "--filter-value", "NASA"], env=WIDE)
     assert result.exit_code == 0
     assert "HHS" in result.output
 

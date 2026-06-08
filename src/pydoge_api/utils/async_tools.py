@@ -30,9 +30,7 @@ def run_async(coro):
         return loop.run_until_complete(coro)
 
 
-async def _fetch_grants_pages(
-    client: DogeAPIClient, endpoint: str, params, total_pages: int
-) -> list[dict]:
+async def _fetch_grants_pages(client: DogeAPIClient, endpoint: str, params, total_pages: int) -> list[dict]:
     """
     Asynchronously fetch all remaining pages of a paginated endpoint.
 
@@ -54,9 +52,7 @@ async def _fetch_grants_pages(
         Each element is a page's parsed response (dict)
     """
     headers = dict(client.client.headers)
-    async with httpx.AsyncClient(
-        base_url=client.base_url, timeout=client.timeout, headers=headers
-    ) as async_client:
+    async with httpx.AsyncClient(base_url=client.base_url, timeout=client.timeout, headers=headers) as async_client:
         tasks = []
         for page in range(2, total_pages + 1):
             query = params.model_dump(exclude_none=True)
@@ -66,9 +62,7 @@ async def _fetch_grants_pages(
     return results
 
 
-async def _async_get(
-    client: httpx.AsyncClient, endpoint: str, params: dict, *, max_retries: int = 5
-) -> dict:
+async def _async_get(client: httpx.AsyncClient, endpoint: str, params: dict, *, max_retries: int = 5) -> dict:
     """
     Perform GET with retry/backoff on 429/5xx for async clients.
 

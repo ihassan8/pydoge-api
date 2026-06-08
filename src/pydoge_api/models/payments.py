@@ -7,24 +7,12 @@ from .common import Meta
 
 
 class PaymentParams(BaseModel):
-    sort_by: Optional[str] = Field(
-        default=None, description="Field to sort by: 'amount' or 'date'."
-    )
-    sort_order: Optional[str] = Field(
-        default=None, description="Sort direction: 'asc' or 'desc'."
-    )
-    page: Optional[int] = Field(
-        default=1, description="Page number to retrieve."
-    )
-    per_page: Optional[int] = Field(
-        default=100, description="The number of items per page from 1 to 500 (max: 500)."
-    )
-    filter: Optional[str] = Field(
-        default=None, description="Filter key: 'agency_name', 'date', or 'org_name'."
-    )
-    filter_value: Optional[str] = Field(
-        default=None, description="The value to filter by"
-    )
+    sort_by: Optional[str] = Field(default=None, description="Field to sort by: 'amount' or 'date'.")
+    sort_order: Optional[str] = Field(default=None, description="Sort direction: 'asc' or 'desc'.")
+    page: Optional[int] = Field(default=1, description="Page number to retrieve.")
+    per_page: Optional[int] = Field(default=100, description="The number of items per page from 1 to 500 (max: 500).")
+    filter: Optional[str] = Field(default=None, description="Filter key: 'agency_name', 'date', or 'org_name'.")
+    filter_value: Optional[str] = Field(default=None, description="The value to filter by")
 
 
 class Payment(BaseModel):

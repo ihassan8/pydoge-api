@@ -153,9 +153,12 @@ class ExportMixin:
 
         return text
 
+
 class DictExportable(dict, ExportMixin):
     """A dict subclass with .export() support"""
+
     pass
+
 
 def handle_dict(obj):
     if isinstance(obj, dict) and not hasattr(obj, "export"):

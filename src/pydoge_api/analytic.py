@@ -27,9 +27,7 @@ class DogeAnalytics:
             Passed to DogeAPI (e.g. fetch_all=True, run_async=True).
         """
         if api_kwargs.get("handle_response") is False:
-            raise ValueError(
-                "DogeAnalytics needs parsed data; handle_response must be True."
-            )
+            raise ValueError("DogeAnalytics needs parsed data; handle_response must be True.")
         self._api = DogeAPI(client=client, **api_kwargs)
         self.savings = self._api.savings
 

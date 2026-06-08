@@ -10,6 +10,7 @@ from .config import BASE_URL, TIMEOUT
 
 class DogeAPIRequestError(Exception):
     """Raised when a request fails after all retries."""
+
     def __init__(self, method: str, url: str, status_code: int, message: str):
         self.method = method
         self.url = url
@@ -30,7 +31,7 @@ class DogeAPIClient:
         max_retries: int = 5,
         backoff_factor: float = 1.5,
         max_backoff: float = 60.0,
-        **httpx_kwargs
+        **httpx_kwargs,
     ):
         self.base_url = base_url
         self.timeout = timeout
@@ -95,7 +96,7 @@ class DogeAPIClient:
                     wait = self.backoff_factor * (retries + 1)
             else:
                 jitter = random.uniform(0, 0.3)
-                wait = self.backoff_factor * (2 ** retries) + jitter
+                wait = self.backoff_factor * (2**retries) + jitter
 
             # Cap the wait so large retry counts can't produce multi-minute sleeps.
             wait = min(wait, self.max_backoff)
@@ -110,9 +111,7 @@ class DogeAPIClient:
         logger.error(f"❌ {method} {url} failed after {self.max_retries} retries.")
         raise DogeAPIRequestError(method, url, response.status_code, "Max retries exceeded")
 
-    def get(
-        self, endpoint: str, params: Optional[dict] = None, decode: bool = True
-    ) -> Union[dict, httpx.Response]:
+    def get(self, endpoint: str, params: Optional[dict] = None, decode: bool = True) -> Union[dict, httpx.Response]:
         url = f"{self.base_url}{endpoint}"
         response = self.rest_request("GET", url, params=params)
         return response.json() if decode else response

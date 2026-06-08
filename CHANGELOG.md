@@ -4,7 +4,15 @@ All notable changes to this project are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.3.0] — Unreleased
+## [0.3.1] — Unreleased
+
+### Changed
+- **Dropped Python 3.8 support** (end-of-life since Oct 2024); `requires-python` is now
+  `>=3.9`. The CI matrix tests 3.9–3.12. This was prompted by `matplotlib`/`pandas`/`numpy`
+  no longer shipping 3.8-compatible releases.
+- Applied `ruff format` across the codebase so the formatter check passes in CI.
+
+## [0.3.0]
 
 ### ⚠️ Breaking changes
 - **Payments model rewritten to match the DOGE OpenAPI spec.** `Payment` fields are now

@@ -13,7 +13,7 @@ optional sensitive-data masking.
 
 ## Build & Development Commands
 
-Declared `requires-python = ">=3.8"` in `pyproject.toml`; CI matrix tests 3.8–3.12 on
+Declared `requires-python = ">=3.9"` in `pyproject.toml`; CI matrix tests 3.9–3.12 on
 Ubuntu and Windows.
 
 ```bash
