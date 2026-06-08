@@ -1,239 +1,205 @@
 <a name="readme-top"></a>
 
 <div align="center">
+
 <img src="https://github.com/ihassan8/pydoge-api/raw/main/docs/img/logo_main.PNG" alt="PyDOGE Logo" width="176">
-<p>A Python library to interact with the Department of Government Efficiency (DOGE) API.</p>
 
-<br/>
+# PyDOGE API
 
-[![PyPI version](https://img.shields.io/pypi/v/pydoge-api?color=indigo&logo=pypi&logoColor=white)](https://pypi.org/project/pydoge-api/)
-[![Python versions](https://img.shields.io/pypi/pyversions/pydoge-api?color=indigo&logo=python&logoColor=white)](https://pypi.org/project/pydoge-api/)
-[![License: MIT](https://img.shields.io/badge/license-MIT-indigo.svg)](https://github.com/ihassan8/pydoge-api/blob/main/LICENSE)
-[![Downloads](https://img.shields.io/pypi/dm/pydoge-api?color=indigo)](https://pypi.org/project/pydoge-api/)
+**A modern, fully-typed Python SDK for the U.S. Department of Government Efficiency (DOGE) API** — pull cancelled grants, contracts, leases, and payments, then analyze, export, and visualize them in a few lines.
+
+[![PyPI version](https://img.shields.io/pypi/v/pydoge-api?color=3f51b5&logo=pypi&logoColor=white)](https://pypi.org/project/pydoge-api/)
+[![Python versions](https://img.shields.io/pypi/pyversions/pydoge-api?color=3f51b5&logo=python&logoColor=white)](https://pypi.org/project/pydoge-api/)
+[![Downloads](https://img.shields.io/pypi/dm/pydoge-api?color=3f51b5)](https://pypi.org/project/pydoge-api/)
 [![CI](https://img.shields.io/github/actions/workflow/status/ihassan8/pydoge-api/ci.yml?branch=main&label=CI&logo=github)](https://github.com/ihassan8/pydoge-api/actions/workflows/ci.yml)
-[![Docs](https://img.shields.io/badge/docs-online-indigo?logo=readthedocs&logoColor=white)](https://ihassan8.github.io/pydoge-api)
+[![Docs](https://img.shields.io/badge/docs-online-3f51b5?logo=readthedocs&logoColor=white)](https://ihassan8.github.io/pydoge-api)
+[![License: MIT](https://img.shields.io/badge/license-MIT-3f51b5.svg)](https://github.com/ihassan8/pydoge-api/blob/main/LICENSE)
 
-<br/>
-
-<p>
-<a href="https://ihassan8.github.io/pydoge-api"><strong>📃 Documentation</strong></a>
-&nbsp;·&nbsp;
-<a href="https://github.com/ihassan8/pydoge-api/issues/new">🔧 Report Bug</a>
-</p>
+<a href="https://ihassan8.github.io/pydoge-api"><strong>📃 Documentation</strong></a> &nbsp;·&nbsp;
+<a href="https://pypi.org/project/pydoge-api/">📦 PyPI</a> &nbsp;·&nbsp;
+<a href="https://github.com/ihassan8/pydoge-api/issues/new">🐛 Report a bug</a>
 
 </div>
 
-<br>
+---
 
-<details open="true">
-  <summary><strong> 🧾 Table of Contents</strong></summary>
-  <ol>
-    <li>
-      <a href="#about-the-project">About The Project</a>
-    </li>
-    <li>
-      <a href="#highlights">Highlights</a>
-    </li>
-    <li>
-      <a href="#getting-started">Getting Started</a>
-      <ul>
-        <li><a href="#installation">Installation</a></li>
-      </ul>
-    </li>
-    <li><a href="#usage">Usage</a>
-      <ul>
-        <li><a href="#get-grants-and-sorted-by-savings">Get Grants and sorted by savings</a></li>
-        <li><a href="#get-contracts-and-sorted-by-savings">Get Contracts and sorted by savings</a></li>
-        <li><a href="#get-leases">Get Leases</a></li>
-        <li><a href="#get-payments-and-filter-payments-by-agency">Get Payments and filter payments by agency</a></li>
-        <li><a href="#without-using-context-manager">Without using Context Manager</a></li>
-      </ul>
-    </li>
-    <li><a href="#contributors">Contributors </a></li>
-    <li><a href="#acknowledgments">Acknowledgements </a></li>
-  </ol>
-</details>
+PyDOGE API wraps the public [DOGE API](https://api.doge.gov/docs) — a federal transparency
+initiative publishing detailed data on 💸 cancelled grants, 📑 contract terminations,
+🏢 lease reductions, and 🧾 payment transactions — and turns it into a smooth workflow for
+data scientists, analysts, and journalists.
 
-## 🐍 About The Project
-PyDOGE API is an advanced, Python wrapper for interacting with the public-facing API of the **Department of Government Efficiency (DOGE)** — a federal initiative aimed at increasing transparency and fiscal accountability by sharing detailed datasets on:
+## ✨ Highlights
 
-- 💸 Cancelled grants
-- 📑 Contract terminations
-- 🏢 Lease reductions
-- 🧾 Payment transactions
+|  | Feature | What you get |
+|--|---------|--------------|
+| 🔄 | **Auto-pagination** | Fetch one page or every page (`fetch_all=True`), sync or async |
+| 🧱 | **Typed responses** | Pydantic v2 models — or plain dicts when you prefer |
+| 🐼 | **DataFrames** | `.to_dataframe()` with automatic date parsing |
+| 💾 | **One-line export** | CSV / Excel / JSON, timestamped |
+| 📊 | **Instant summary** | rows, nulls, dtypes, and stats via `.summary()` |
+| 🧮 | **Combined dataset** | `savings.all()` — grants + contracts + leases in one tidy frame |
+| 📈 | **Built-in charts** | bar, time-series, distribution, US-state choropleth (`[viz]` extra) |
+| 🖥️ | **Modern CLI** | `pydoge` — Typer + Rich, fetch/export/summarize from the terminal |
+| 🔁 | **Retry-safe client** | exponential backoff on 429/5xx, with a cap |
+| 🔒 | **Secure logging** | credential scrubbing + on-demand masking via [PyLogShield](https://github.com/ihassan8/pylogshield) |
 
-## 🚀 Features
+## 📦 Installation
 
-- Auto-pagination (sync or async, fetch all pages if needed)
-- `.export()` to CSV, Excel, or JSON with timestamped filenames  
-- `.to_dataframe()` for Pandas users 
-- `.summary()` with analytics (rows, nulls, dtypes, stats)  
-- `summary(save_as="...")` for file logging  
-- Returns Pydantic models & dict output
-- Retry-safe client with 429 handling
-- `savings.all()` — one tidy DataFrame across grants, contracts & leases
-- 🖥️ Modern `pydoge` CLI (Typer + Rich) for fetch / export / summary
-- 📈 Built-in charts (bar, time-series, distribution, US-state choropleth) via the `[viz]` extra
-- 🔒 Secure logging powered by [PyLogShield](https://github.com/ihassan8/pylogshield)
-
-This package enables data scientists and analysts to **programmatically access and analyze** the data with ease.
-
-<!--Getting Started-->
-## 📌 Getting Started
-
-### Installation
-
-Install:
 ```bash
-pip install pydoge-api
-```
-Upgrade:
-```
-pip install --upgrade pydoge-api
+pip install pydoge-api              # core
+pip install "pydoge-api[viz]"      # + charts (matplotlib, plotly)
 ```
 
-**Documentation**
+> Requires Python 3.8+.
 
-Full developer docs with API reference, usage, and model schema:
+## ⚡ Quickstart
 
-- 👉 [Docs and Examples (PyDOGE)](https://ihassan8.github.io/pydoge-api/)
-- 👉 [Official Swagger Page](https://api.doge.gov/docs)
-
-## 📚 Usage
-
-## Get Grants and sorted by savings
 ```python
 from pydoge_api import DogeAPI
 
-with DogeAPI(fetch_all=True, run_async=False) as api:
+with DogeAPI(fetch_all=True) as api:
     grants = api.savings.get_grants(sort_by="savings")
-    df = grants.to_dataframe()
-    print(df.head())
 
-    # Export to CSV
-    grants.export("grants_q1", format="csv")
-    
-    # Show summary in terminal
-    grants.summary(verbose=True)
-    
-    # Save the summary as markdown
-    grants.summary(save_as="logs/grants_summary.md")
+    print(grants.meta.total_results)        # e.g. 15887
+    df = grants.to_dataframe()              # pandas DataFrame, dates parsed
+    grants.summary()                        # rows / nulls / dtypes / stats
+    grants.export("grants", format="csv")  # -> grants_YYYYMMDD_HHMMSS.csv
 ```
 
-## Get Contracts and sorted by savings
-```python
-with DogeAPI(fetch_all=True, run_async=False) as api:
-    contracts = api.savings.get_contracts(sort_by="savings")
-    df = contracts.to_dataframe()
-    print(df.head())
+Prefer the **combined** savings dataset?
 
-    # Export to CSV
-    contracts.export("contracts_q1", format="csv")
-    
-    # Show summary in terminal
-    contracts.summary(verbose=True)
-    
-    # Save the summary as markdown
-    contracts.summary(save_as="logs/contracts_summary.md")
+```python
+with DogeAPI(fetch_all=True) as api:
+    df = api.savings.all()                  # grants + contracts + leases, with a `kind` column
+
+print(df.groupby("kind")["savings"].sum())
 ```
 
-## Get Leases
-```python
-with DogeAPI(fetch_all=True, run_async=False) as api:
-    leases = api.savings.get_leases()
-    df = leases.to_dataframe()
-    print(df.head())
-    
-    # Export to CSV
-    leases.export("leases_q1", format="csv")
-    
-    # Show summary in terminal
-    leases.summary(verbose=True)
-    
-    # Save the summary as markdown
-    leases.summary(save_as="logs/leases_summary.md")
-```
-    
-## Get Payments and filter payments by agency
-```python
-with DogeAPI(fetch_all=True, run_async=False) as api:
-    payments = api.payments.get_payments(filter="agency_name", filter_value="NASA")
-    df =payments.to_dataframe()
-    print(df.head())
-    
-    # Export to CSV
-    payments.export("payments_q1", format="csv")
-    
-    # Show summary in terminal
-    payments.summary(verbose=True)
-    
-    # Save the summary as markdown
-    payments.summary(save_as="logs/payments_summary.md")
+## 🖥️ Command line
+
+No Python required — the `pydoge` CLI ships with the package:
+
+```bash
+pydoge grants --sort-by savings --limit 10                       # Rich preview table
+pydoge payments --filter agency_name --filter-value NASA --summary
+pydoge contracts --fetch-all --export csv --out contracts        # timestamped CSV
+pydoge all --export json                                          # combined dataset
 ```
 
-## Without using Context Manager
-```python
-api = DogeAPI(
-    fetch_all=True, # Get all records if True. Default False
-    run_async=False # For Async set this to True
-)
+## 📈 Visualize in one line
 
+```python
+from pydoge_api import DogeAPI, viz        # pip install "pydoge-api[viz]"
+
+with DogeAPI(fetch_all=True) as api:
+    df = api.savings.get_grants(sort_by="savings").to_dataframe()
+
+viz.plot_top_agencies(df, metric="savings", top_n=10)
+```
+
+<div align="center">
+<img src="https://github.com/ihassan8/pydoge-api/raw/main/docs/img/top_agencies_savings.png" alt="Top 10 agencies by grant savings" width="760">
+</div>
+
+Also available: `plot_over_time`, `plot_distribution`, `plot_cumulative`, and an interactive
+US-state `plot_state_choropleth` for leases.
+
+## 📚 More examples
+
+<details>
+<summary><strong>Contracts, leases & payments</strong></summary>
+
+```python
+from pydoge_api import DogeAPI
+
+with DogeAPI(fetch_all=True) as api:
+    contracts = api.savings.get_contracts(sort_by="value")
+    leases    = api.savings.get_leases(sort_by="savings")
+    payments  = api.payments.get_payments(filter="agency_name", filter_value="NASA")
+
+    for resp, name in [(contracts, "contracts"), (leases, "leases"), (payments, "payments")]:
+        resp.summary()
+        resp.export(name, format="xlsx")
+```
+
+Sort fields: savings endpoints accept `savings | value | date`; payments accept `amount | date`.
+Payment filters: `agency_name | date | org_name`.
+</details>
+
+<details>
+<summary><strong>Output modes & async</strong></summary>
+
+```python
+# Plain dicts instead of Pydantic models (still export-capable)
+with DogeAPI(output_pydantic=False) as api:
+    grants = api.savings.get_grants()
+    grants.export("grants", format="json")
+
+# Raw httpx.Response (no parsing)
+with DogeAPI(handle_response=False) as api:
+    resp = api.savings.get_grants()
+    print(resp.status_code, resp.json()["meta"])
+
+# Concurrent pagination for large pulls
+with DogeAPI(fetch_all=True, run_async=True) as api:
+    payments = api.payments.get_payments()
+```
+</details>
+
+<details>
+<summary><strong>Without a context manager</strong></summary>
+
+```python
+api = DogeAPI(fetch_all=True)
 try:
-    # Get Grants and sorted by savings
     grants = api.savings.get_grants(sort_by="savings")
-    
-    # Get Contracts and sorted by savings
-    contracts = api.savings.get_contracts(sort_by="savings")
-    
-    # Get Leases
-    leases = api.savings.get_leases()
-    
-    # Get Payments and filter payments by agency
-    payments = api.payments.get_payments(filter="agency_name", filter_value="NASA")
-    
-    # Export to CSV
-    grants.export("grants_q1", format="csv")
-    
-    # Show summary in terminal
-    grants.summary(verbose=True)
-    
-    # Save the summary as markdown
-    grants.summary(save_as="logs/grants_summary.md")
-    
+    grants.export("grants", format="csv")
 finally:
     api.close()
-    
 ```
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+</details>
 
-## 🔒 Secure Logging
+<details>
+<summary><strong>Error handling</strong></summary>
 
-PyDOGE API logs through [PyLogShield](https://github.com/ihassan8/pylogshield) instead of
-the bare standard library. Out of the box this scrubs cloud-credential prefixes
-(`AWS_`, `AZURE_`, `GCP_`, `GOOGLE_`, `TOKEN`) from every record, and you can opt into
-sensitive-value masking per call:
+```python
+from pydoge_api import DogeAPI, DogeAPIRequestError
+
+with DogeAPI() as api:
+    try:
+        grants = api.savings.get_grants()
+    except DogeAPIRequestError as err:
+        print(err.status_code, err.url)   # raised after retries / on non-retriable errors
+```
+</details>
+
+## 🔒 Secure logging
+
+PyDOGE logs through [PyLogShield](https://github.com/ihassan8/pylogshield) — cloud-credential
+prefixes (`AWS_`, `AZURE_`, `GCP_`, `TOKEN`, …) are scrubbed automatically, and you can mask
+secrets per call. The logger is created lazily, so `import pydoge_api` has **no** side effects.
 
 ```python
 from pydoge_api._logging import get_logger
 
-# Customize the SDK logger (e.g. JSON output, a custom log directory)
 log = get_logger("pydoge_api", enable_json=True)
-log.warning("token=abc123 leaked into a message", mask=True)  # -> token=***
+log.warning("api_key=SECRET123", mask=True)   # -> api_key=***
 ```
 
-> The logger is created lazily on the first log call (so `import pydoge_api` has no
-> side effects). On first use PyLogShield writes to `~/.logs/pydoge_api.log`; pass
-> `add_console=False` or a custom `log_directory` to `get_logger(...)` to change this.
+## 📖 Documentation
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+- **Full docs:** https://ihassan8.github.io/pydoge-api/ — quickstart, advanced usage, CLI,
+  visualization, logging, and the complete API reference.
+- **Official DOGE API:** https://api.doge.gov/docs
+- **Changelog:** [CHANGELOG.md](CHANGELOG.md)
 
-## 👪 Contributors
-All contributions are welcome. If you have a suggestion that would make this better, please fork the repo and create a merge request. You can also simply open an issue with the label 'enhancement'.
+## 🤝 Contributing
 
-Don't forget to give the project a star! Thanks again!
+Contributions are welcome! Open an issue with the `enhancement` label, or fork the repo and
+send a pull request. If PyDOGE API is useful to you, please ⭐ the project — it helps.
 
+## 📝 License
 
-## 👏 Acknowledgments
-Inspiration, code snippets, etc.
+Released under the [MIT License](LICENSE).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
