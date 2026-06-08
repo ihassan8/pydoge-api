@@ -3,6 +3,7 @@ from typing import Any, Type, TypeVar, Union
 
 from pydantic import BaseModel
 
+from .._logging import logger
 from .async_tools import _fetch_grants_pages, run_async
 from .exporter import handle_dict
 
@@ -49,13 +50,18 @@ def _fetch_paginated(
     # public return type precise (Union[ModelT, dict]).
     resp: Any = initial_response
 
-    if not api.fetch_all or getattr(resp.meta, "pages", 1) <= 1:
+    total_pages = getattr(resp.meta, "pages", 1)
+    if not api.fetch_all or total_pages <= 1:
+        if api.fetch_all:
+            logger.debug(f"{endpoint}: single page, no pagination needed")
         return initial_response if api.output_pydantic else handle_dict(resp.model_dump(exclude_none=True))
 
     all_items = getattr(resp.result, key)
     per_page = params.per_page
     page = params.page
-    total_pages = resp.meta.pages
+
+    mode = "async" if api.run_async else "sync"
+    logger.info(f"📄 Auto-paginating {endpoint}: fetching pages 2–{total_pages} ({mode})")
 
     if api.run_async:
 
@@ -70,6 +76,7 @@ def _fetch_paginated(
             all_items.extend(getattr(page_model.result, key))
     else:
         for p in range(page + 1, total_pages + 1):
+            logger.debug(f"{endpoint}: fetching page {p}/{total_pages}")
             params.page = p
             next_data = client.get(endpoint, params=params.model_dump(exclude_none=True), decode=True)
             next_model: Any = model_cls(**next_data)
@@ -79,5 +86,6 @@ def _fetch_paginated(
     setattr(resp.result, key, all_items)
     resp.meta.total_results = len(all_items)
     resp.meta.pages = ceil(len(all_items) / per_page)
+    logger.info(f"✅ {endpoint}: merged {len(all_items)} {key} from {total_pages} pages")
 
     return initial_response if api.output_pydantic else handle_dict(resp.model_dump(exclude_none=True))

@@ -71,7 +71,9 @@ class DogeAPIClient:
 
         while retries <= self.max_retries:
             try:
+                logger.debug(f"→ {method} {url} params={kwargs.get('params') or {}}")
                 response = self.client.request(method, url, **kwargs)
+                logger.debug(f"← {response.status_code} {method} {url} ({len(response.content)} bytes)")
                 if response.status_code < 400:
                     return response
                 if response.status_code not in retriable:

@@ -52,6 +52,7 @@ async def _fetch_grants_pages(client: DogeAPIClient, endpoint: str, params, tota
         Each element is a page's parsed response (dict)
     """
     headers = dict(client.client.headers)
+    logger.debug(f"async: requesting pages 2–{total_pages} concurrently for {endpoint}")
     async with httpx.AsyncClient(base_url=client.base_url, timeout=client.timeout, headers=headers) as async_client:
         tasks = []
         for page in range(2, total_pages + 1):
