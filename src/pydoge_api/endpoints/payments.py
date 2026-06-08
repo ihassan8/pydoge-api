@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING, Optional, Union, cast
 
 import httpx
 
+from .._logging import logger
 from ..client import DogeAPIClient
 from ..models.payments import PaymentParams, PaymentResponse, PaymentStatisticsResponse
 from ..utils.exporter import handle_dict
@@ -73,6 +74,10 @@ class PaymentsAPI:
         )
         query = params.model_dump(exclude_none=True)
 
+        _flt = f", filter={filter}={filter_value!r}" if filter else ""
+        logger.info(
+            f"🧾 Fetching payments (sort_by={sort_by!r}, per_page={per_page}, fetch_all={self.api.fetch_all}{_flt})"
+        )
         result = self.client.get("/payments", params=query, decode=self.api.handle_response)
         if not self.api.handle_response:
             return result
@@ -103,6 +108,7 @@ class PaymentsAPI:
             plain dict if `output_pydantic=False`,
             or raw response if `handle_response=False`.
         """
+        logger.info("📊 Fetching payment statistics")
         result = self.client.get("/payments/statistics", decode=self.api.handle_response)
         if not self.api.handle_response:
             return result

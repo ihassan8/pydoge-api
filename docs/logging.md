@@ -21,6 +21,41 @@ logger in your own code.
 
 ---
 
+## Tracing what the SDK is doing
+
+The SDK emits structured activity logs so you can see exactly what it's doing:
+
+- **`INFO`** — milestones: each endpoint fetch, auto-pagination start/finish, combined-dataset
+  build, and exports.
+- **`DEBUG`** — detail: every HTTP request/response (method, URL, params, status, size),
+  per-page pagination, `to_dataframe` shape, and client init/close.
+
+Enable `DEBUG` by configuring the logger **before** your first call:
+
+```python
+from pydoge_api import DogeAPI
+from pydoge_api._logging import get_logger
+
+get_logger("pydoge_api", log_level="DEBUG")   # configure once, up front
+
+with DogeAPI(fetch_all=True) as api:
+    api.savings.get_leases(sort_by="savings")
+```
+
+```text
+INFO   🏢 Fetching leases (sort_by='savings', per_page=100, fetch_all=True)
+DEBUG  → GET https://api.doge.gov/savings/leases params={'sort_by': 'savings', 'page': 1, 'per_page': 100}
+DEBUG  ← 200 GET https://api.doge.gov/savings/leases (17460 bytes)
+INFO   📄 Auto-paginating /savings/leases: fetching pages 2–3 (sync)
+DEBUG  /savings/leases: fetching page 2/3
+INFO   ✅ /savings/leases: merged 264 leases from 3 pages
+```
+
+At the default `INFO` level you still get the high-level milestones without the
+per-request noise.
+
+---
+
 ## Getting the logger
 
 ```python

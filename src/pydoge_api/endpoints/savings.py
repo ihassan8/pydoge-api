@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING, Any, Optional, Union, cast
 import httpx
 import pandas as pd
 
+from .._logging import logger
 from ..client import DogeAPIClient
 from ..models.savings import ContractParams, ContractResponse, GrantParams, GrantResponse, LeaseParams, LeaseResponse
 from ..utils.pagination import _fetch_paginated
@@ -58,6 +59,7 @@ class SavingsAPI:
         params = GrantParams(sort_by=sort_by, sort_order=sort_order, page=page, per_page=per_page)
         query = params.model_dump(exclude_none=True)
 
+        logger.info(f"💸 Fetching grants (sort_by={sort_by!r}, per_page={per_page}, fetch_all={self.api.fetch_all})")
         result = self.client.get("/savings/grants", params=query, decode=self.api.handle_response)
         if not self.api.handle_response:
             return result
@@ -101,6 +103,7 @@ class SavingsAPI:
         params = ContractParams(sort_by=sort_by, sort_order=sort_order, page=page, per_page=per_page)
         query = params.model_dump(exclude_none=True)
 
+        logger.info(f"📑 Fetching contracts (sort_by={sort_by!r}, per_page={per_page}, fetch_all={self.api.fetch_all})")
         result = self.client.get("/savings/contracts", params=query, decode=self.api.handle_response)
         if not self.api.handle_response:
             return result
@@ -144,6 +147,7 @@ class SavingsAPI:
         params = LeaseParams(sort_by=sort_by, sort_order=sort_order, page=page, per_page=per_page)
         query = params.model_dump(exclude_none=True)
 
+        logger.info(f"🏢 Fetching leases (sort_by={sort_by!r}, per_page={per_page}, fetch_all={self.api.fetch_all})")
         result = self.client.get("/savings/leases", params=query, decode=self.api.handle_response)
         if not self.api.handle_response:
             return result
@@ -194,6 +198,7 @@ class SavingsAPI:
         ...     df = api.savings.all()
         >>> df.groupby(["kind", "agency"])["savings"].sum()
         """
+        logger.info("🧮 Building combined savings dataset (grants + contracts + leases)")
         frames = []
         for kind, fetch in (
             ("grant", self.get_grants),
@@ -207,5 +212,8 @@ class SavingsAPI:
                 )
             df = cast(Any, resp).to_dataframe(parse_dates=parse_dates)
             df.insert(0, "kind", kind)
+            logger.debug(f"  {kind}: {len(df)} rows")
             frames.append(df)
-        return pd.concat(frames, ignore_index=True)
+        combined = pd.concat(frames, ignore_index=True)
+        logger.info(f"✅ Combined dataset: {len(combined)} rows across {len(frames)} categories")
+        return combined

@@ -6,6 +6,8 @@ from typing import Optional
 import pandas as pd
 from pydantic import BaseModel
 
+from .._logging import logger
+
 #: Columns the DOGE API returns as date strings. They are coerced to ``datetime64``
 #: by :meth:`ExportMixin.to_dataframe` so time-series analysis and plotting work out
 #: of the box. (``date`` — grants/leases; ``payment_date`` — payments;
@@ -54,6 +56,7 @@ class ExportMixin:
         else:
             raise ValueError("Unsupported format. Choose: csv, xlsx, json.")
 
+        logger.info(f"💾 Exported {len(df)} rows to {path}")
         return path
 
     def to_dataframe(self, parse_dates: bool = True) -> pd.DataFrame:
@@ -74,6 +77,7 @@ class ExportMixin:
         df = pd.DataFrame(self._get_collection())
         if parse_dates:
             df = _coerce_dates(df)
+        logger.debug(f"to_dataframe: {len(df)} rows × {len(df.columns)} columns (parse_dates={parse_dates})")
         return df
 
     def summary(self, verbose: bool = False, save_as: Optional[str] = None, to_stdout: bool = True) -> str:

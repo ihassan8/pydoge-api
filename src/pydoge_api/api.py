@@ -1,5 +1,6 @@
 from typing import Optional
 
+from ._logging import logger
 from .client import DogeAPIClient
 from .endpoints.payments import PaymentsAPI
 from .endpoints.savings import SavingsAPI
@@ -62,10 +63,15 @@ class DogeAPI:
 
         self.savings = SavingsAPI(client=self.client, api=self)
         self.payments = PaymentsAPI(client=self.client, api=self)
+        logger.debug(
+            f"DogeAPI initialized (base_url={self.client.base_url}, fetch_all={fetch_all}, "
+            f"output_pydantic={output_pydantic}, handle_response={handle_response}, run_async={run_async})"
+        )
 
     def close(self):
         """Close the internal client session (unless an external client was injected)."""
         if self._owns_client:
+            logger.debug("Closing DogeAPI client session")
             self.client.close()
 
     def __enter__(self):
