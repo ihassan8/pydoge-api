@@ -4,7 +4,7 @@
 <img src="https://github.com/ihassan8/pydoge-api/raw/main/docs/img/logo_main.PNG" alt="PyDOGE Logo" width="176">
 <p>A Python library to interact with the Department of Government Efficiency (DOGE) API.</p>
 
-<br/>
+<br/> 
 
 [![PyPI version](https://img.shields.io/pypi/v/pydoge-api?color=indigo&logo=pypi&logoColor=white)](https://pypi.org/project/pydoge-api/)
 [![Python versions](https://img.shields.io/pypi/pyversions/pydoge-api?color=indigo&logo=python&logoColor=white)](https://pypi.org/project/pydoge-api/)
