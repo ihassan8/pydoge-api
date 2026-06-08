@@ -1,0 +1,39 @@
+/* ==========================================================================
+   PyDOGE API — documentation theme tweaks
+   ========================================================================== */
+
+:root {
+  --md-primary-fg-color:        #3f51b5;  /* indigo */
+  --md-primary-fg-color--light: #5c6bc0;
+  --md-primary-fg-color--dark:  #303f9f;
+  --md-accent-fg-color:         #536dfe;
+}
+
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color: #5c6bc0;
+  --md-accent-fg-color:  #8c9eff;
+}
+
+/* Slightly tighter, more readable code blocks */
+.md-typeset pre > code {
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+/* Cards used on the landing page (md_in_html grids) */
+.md-typeset .grid.cards > :is(ul, ol) > li,
+.md-typeset .grid > .card {
+  border-radius: 0.6rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.md-typeset .grid.cards > :is(ul, ol) > li:hover {
+  border-color: var(--md-accent-fg-color);
+  box-shadow: 0 4px 18px rgba(63, 81, 181, 0.18);
+  transform: translateY(-2px);
+}
+
+/* Brand the logo a touch */
+.md-header__button.md-logo img {
+  border-radius: 4px;
+}

@@ -6,11 +6,11 @@ Provides fully typed, paginated, and export-ready access to savings, payments,
 and contract-related endpoints.
 """
 
-from .client import DogeAPIClient, DogeAPIRequestError
-from .api import DogeAPI
 from .analytic import DogeAnalytics
-from .endpoints.savings import SavingsAPI
+from .api import DogeAPI
+from .client import DogeAPIClient, DogeAPIRequestError
 from .endpoints.payments import PaymentsAPI
+from .endpoints.savings import SavingsAPI
 
 __all__ = [
     "DogeAPI",

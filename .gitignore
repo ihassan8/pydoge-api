@@ -140,8 +140,12 @@ venv.bak/
 # Rope project settings
 .ropeproject
 
-# mkdocs documentation
+# mkdocs / zensical documentation
 /site
+/public
+
+# setuptools_scm generated version file
+src/pydoge_api/_version.py
 
 # mypy
 .mypy_cache/

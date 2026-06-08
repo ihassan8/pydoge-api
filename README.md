@@ -1,6 +1,26 @@
+<a name="readme-top"></a>
+
 <div align="center">
-<img src="docs/img/logo_main.PNG" alt="PyDOGE Logo" width= "176">
-<p>A Python library to interact with Department of Government Efficiency (DOGE) API.</p>
+<img src="https://github.com/ihassan8/pydoge-api/raw/main/docs/img/logo_main.PNG" alt="PyDOGE Logo" width="176">
+<p>A Python library to interact with the Department of Government Efficiency (DOGE) API.</p>
+
+<br/>
+
+[![PyPI version](https://img.shields.io/pypi/v/pydoge-api?color=indigo&logo=pypi&logoColor=white)](https://pypi.org/project/pydoge-api/)
+[![Python versions](https://img.shields.io/pypi/pyversions/pydoge-api?color=indigo&logo=python&logoColor=white)](https://pypi.org/project/pydoge-api/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-indigo.svg)](https://github.com/ihassan8/pydoge-api/blob/main/LICENSE)
+[![Downloads](https://img.shields.io/pypi/dm/pydoge-api?color=indigo)](https://pypi.org/project/pydoge-api/)
+[![CI](https://img.shields.io/github/actions/workflow/status/ihassan8/pydoge-api/ci.yml?branch=main&label=CI&logo=github)](https://github.com/ihassan8/pydoge-api/actions/workflows/ci.yml)
+[![Docs](https://img.shields.io/badge/docs-online-indigo?logo=readthedocs&logoColor=white)](https://ihassan8.github.io/pydoge-api)
+
+<br/>
+
+<p>
+<a href="https://ihassan8.github.io/pydoge-api"><strong>📃 Documentation</strong></a>
+&nbsp;·&nbsp;
+<a href="https://github.com/ihassan8/pydoge-api/issues/new">🔧 Report Bug</a>
+</p>
+
 </div>
 
 <br>
@@ -23,7 +43,7 @@
     <li><a href="#usage">Usage</a>
       <ul>
         <li><a href="#get-grants-and-sorted-by-savings">Get Grants and sorted by savings</a></li>
-        <li><a href="#get-contracts-and-sorted-by-agency">Get Contracts and sorted by agency</a></li>
+        <li><a href="#get-contracts-and-sorted-by-savings">Get Contracts and sorted by savings</a></li>
         <li><a href="#get-leases">Get Leases</a></li>
         <li><a href="#get-payments-and-filter-payments-by-agency">Get Payments and filter payments by agency</a></li>
         <li><a href="#without-using-context-manager">Without using Context Manager</a></li>
@@ -51,6 +71,10 @@ PyDOGE API is an advanced, Python wrapper for interacting with the public-facing
 - `summary(save_as="...")` for file logging  
 - Returns Pydantic models & dict output
 - Retry-safe client with 429 handling
+- `savings.all()` — one tidy DataFrame across grants, contracts & leases
+- 🖥️ Modern `pydoge` CLI (Typer + Rich) for fetch / export / summary
+- 📈 Built-in charts (bar, time-series, distribution, US-state choropleth) via the `[viz]` extra
+- 🔒 Secure logging powered by [PyLogShield](https://github.com/ihassan8/pylogshield)
 
 This package enables data scientists and analysts to **programmatically access and analyze** the data with ease.
 
@@ -96,10 +120,10 @@ with DogeAPI(fetch_all=True, run_async=False) as api:
     grants.summary(save_as="logs/grants_summary.md")
 ```
 
-## Get Contracts and sorted by agency
+## Get Contracts and sorted by savings
 ```python
 with DogeAPI(fetch_all=True, run_async=False) as api:
-    contracts = api.savings.get_contracts(sort_by="agency")
+    contracts = api.savings.get_contracts(sort_by="savings")
     df = contracts.to_dataframe()
     print(df.head())
 
@@ -133,7 +157,7 @@ with DogeAPI(fetch_all=True, run_async=False) as api:
 ## Get Payments and filter payments by agency
 ```python
 with DogeAPI(fetch_all=True, run_async=False) as api:
-    payments = api.payments.get_payments(filter="agency", filter_value="NASA")
+    payments = api.payments.get_payments(filter="agency_name", filter_value="NASA")
     df =payments.to_dataframe()
     print(df.head())
     
@@ -158,14 +182,14 @@ try:
     # Get Grants and sorted by savings
     grants = api.savings.get_grants(sort_by="savings")
     
-    # Get Contracts and sorted by agency
-    contracts = api.savings.get_contracts(sort_by="agency")
+    # Get Contracts and sorted by savings
+    contracts = api.savings.get_contracts(sort_by="savings")
     
     # Get Leases
     leases = api.savings.get_leases()
     
     # Get Payments and filter payments by agency
-    payments = api.payments.get_payments(filter="agency", filter_value="NASA")
+    payments = api.payments.get_payments(filter="agency_name", filter_value="NASA")
     
     # Export to CSV
     grants.export("grants_q1", format="csv")
@@ -180,6 +204,27 @@ finally:
     api.close()
     
 ```
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## 🔒 Secure Logging
+
+PyDOGE API logs through [PyLogShield](https://github.com/ihassan8/pylogshield) instead of
+the bare standard library. Out of the box this scrubs cloud-credential prefixes
+(`AWS_`, `AZURE_`, `GCP_`, `GOOGLE_`, `TOKEN`) from every record, and you can opt into
+sensitive-value masking per call:
+
+```python
+from pydoge_api._logging import get_logger
+
+# Customize the SDK logger (e.g. JSON output, a custom log directory)
+log = get_logger("pydoge_api", enable_json=True)
+log.warning("token=abc123 leaked into a message", mask=True)  # -> token=***
+```
+
+> The logger is created lazily on the first log call (so `import pydoge_api` has no
+> side effects). On first use PyLogShield writes to `~/.logs/pydoge_api.log`; pass
+> `add_console=False` or a custom `log_directory` to `get_logger(...)` to change this.
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## 👪 Contributors

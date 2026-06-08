@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    tags-ignore: ["*.*.*"]
+  pull_request:
+    branches: [main]
+
+jobs:
+
+  test:
+    name: Test
+    uses: ihassan8/shared-workflows/.github/workflows/test.yml@main
+    with:
+      python-versions: '["3.8", "3.9", "3.10", "3.11", "3.12"]'
+      os-matrix: '["ubuntu-latest", "windows-latest"]'
+      install-command: 'pip install -e ".[dev]"'
+      test-command: 'pytest tests/ -v --tb=short'
+
+  lint:
+    name: Lint
+    uses: ihassan8/shared-workflows/.github/workflows/lint.yml@main
+
+  typecheck:
+    name: Type Check
+    uses: ihassan8/shared-workflows/.github/workflows/typecheck.yml@main
+    with:
+      install-command: 'pip install -e "." mypy'
+      typecheck-command: 'mypy src/ --ignore-missing-imports'
+
+  audit:
+    name: Audit
+    uses: ihassan8/shared-workflows/.github/workflows/audit.yml@main
+    with:
+      install-command: 'pip install -e "."'
+
+  coverage:
+    name: Coverage
+    uses: ihassan8/shared-workflows/.github/workflows/coverage.yml@main
+    with:
+      install-command: 'pip install -e ".[dev]"'
+      coverage-source: 'src/'

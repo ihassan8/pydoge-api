@@ -42,8 +42,15 @@ with DogeAPI() as api:
     df = api.savings.get_contracts().to_dataframe()
     print(df.head())
     print(df.shape)
-    df.plot("date_closed", "savings")
+    # e.g. plot the highest-value contracts
+    df.nlargest(10, "value").plot.bar(x="vendor", y="savings")
 ```
+
+!!! tip "Date columns are parsed automatically"
+    `to_dataframe()` coerces `date`, `payment_date`, and `deleted_date` from date strings to
+    `datetime64` by default — so resampling and time-series plots work immediately. Pass
+    `to_dataframe(parse_dates=False)` to keep the raw strings. See
+    [Visualization](visualization.md) for charting helpers.
 This is helpful for:
 
 - Analytics

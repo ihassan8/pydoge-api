@@ -1,11 +1,11 @@
-import time
 import random
-import logging
-import httpx
-from typing import Optional
+import time
+from typing import Optional, Union
 
-logger = logging.getLogger("pydoge_api")
-logger.setLevel(logging.INFO)
+import httpx
+
+from ._logging import logger
+from .config import BASE_URL, TIMEOUT
 
 
 class DogeAPIRequestError(Exception):
@@ -24,17 +24,19 @@ class DogeAPIClient:
 
     def __init__(
         self,
-        base_url: str = "https://api.doge.gov",
-        timeout: float = 10.0,
+        base_url: str = BASE_URL,
+        timeout: float = TIMEOUT,
         session: Optional[httpx.Client] = None,
         max_retries: int = 5,
         backoff_factor: float = 1.5,
+        max_backoff: float = 60.0,
         **httpx_kwargs
     ):
         self.base_url = base_url
         self.timeout = timeout
         self.max_retries = max_retries
         self.backoff_factor = backoff_factor
+        self.max_backoff = max_backoff
 
         if session:
             if not isinstance(session, httpx.Client):
@@ -69,13 +71,20 @@ class DogeAPIClient:
         while retries <= self.max_retries:
             try:
                 response = self.client.request(method, url, **kwargs)
-                if response.status_code < 400 or response.status_code not in retriable:
+                if response.status_code < 400:
                     return response
+                if response.status_code not in retriable:
+                    # Non-retriable client/server error (400, 401, 403, 404, ...):
+                    # surface a clear, typed error instead of returning the body.
+                    raise DogeAPIRequestError(
+                        method, url, response.status_code, response.text[:200] or "Request failed"
+                    )
             except httpx.RequestError as e:
                 logger.warning(f"⚠️ Network error during {method} {url}: {e}")
-                response = getattr(e, "response", None)
-                if response is None:
+                err_response = getattr(e, "response", None)
+                if err_response is None:
                     raise
+                response = err_response
 
             # Retry triggered
             retry_after = response.headers.get("Retry-After")
@@ -88,6 +97,9 @@ class DogeAPIClient:
                 jitter = random.uniform(0, 0.3)
                 wait = self.backoff_factor * (2 ** retries) + jitter
 
+            # Cap the wait so large retry counts can't produce multi-minute sleeps.
+            wait = min(wait, self.max_backoff)
+
             logger.warning(
                 f"🔁 Retry {retries + 1}/{self.max_retries} for {method} {url} "
                 f"→ HTTP {response.status_code}. Waiting {wait:.2f}s..."
@@ -98,12 +110,20 @@ class DogeAPIClient:
         logger.error(f"❌ {method} {url} failed after {self.max_retries} retries.")
         raise DogeAPIRequestError(method, url, response.status_code, "Max retries exceeded")
 
-    def get(self, endpoint: str, params: Optional[dict] = None, decode: bool = True) -> dict:
+    def get(
+        self, endpoint: str, params: Optional[dict] = None, decode: bool = True
+    ) -> Union[dict, httpx.Response]:
         url = f"{self.base_url}{endpoint}"
         response = self.rest_request("GET", url, params=params)
         return response.json() if decode else response
 
-    def post(self, endpoint: str, data: Optional[dict] = None, json: Optional[dict] = None, decode: bool = True) -> dict:
+    def post(
+        self,
+        endpoint: str,
+        data: Optional[dict] = None,
+        json: Optional[dict] = None,
+        decode: bool = True,
+    ) -> Union[dict, httpx.Response]:
         url = f"{self.base_url}{endpoint}"
         response = self.rest_request("POST", url, data=data, json=json)
         return response.json() if decode else response
